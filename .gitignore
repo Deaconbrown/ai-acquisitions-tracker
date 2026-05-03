@@ -1,0 +1,15 @@
+# Data and logs — local only, not pushed to GitHub
+\[02\] Data/
+\[03\] Logs/
+
+# Config contains feed list — kept local
+\[04\] Config/sources.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment files — secrets never go to GitHub
+.env
+*.env
