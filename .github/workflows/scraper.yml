@@ -2,8 +2,8 @@ name: AI Acquisitions Scraper
 
 on:
   schedule:
-    # Runs every day at 08:00 UTC (09:00 UK time)
-    - cron: '0 8 * * *'
+    # Runs every hour
+    - cron: '0 * * * *'
   workflow_dispatch:
     # Allows manual trigger from GitHub Actions tab
 

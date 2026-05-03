@@ -68,6 +68,28 @@ def get_drive_service():
         log("Drive token refreshed.")
     return build("drive", "v3", credentials=creds)
 
+def download_csv_from_drive(service):
+    # Downloads the existing CSV from Google Drive before each run
+    # so the duplicate check has the full history to work against
+    try:
+        results = service.files().list(
+            q=f"name='{DRIVE_FILE_NAME}' and trashed=false",
+            fields="files(id, name)"
+        ).execute()
+        files = results.get("files", [])
+
+        if files:
+            file_id = files[0]["id"]
+            request = service.files().get_media(fileId=file_id)
+            with open(DATA_FILE, "wb") as f:
+                f.write(request.execute())
+            log(f"Existing CSV downloaded from Drive ({file_id})")
+        else:
+            log("No existing CSV on Drive — starting fresh.")
+
+    except Exception as e:
+        log(f"ERROR downloading CSV from Drive: {e}")
+
 def upload_to_drive(service):
     # Uploads the local CSV to Google Drive
     # If the file already exists on Drive it updates it — never duplicates
@@ -162,6 +184,16 @@ def is_relevant(text):
 # and saves matches to the CSV
 def scrape_feeds():
     log("── Scraper run started ──")
+
+    # If running in cloud — download existing CSV from Drive first
+    # so duplicate checking works correctly across runs
+    if RUNNING_IN_CLOUD:
+        try:
+            drive_service = get_drive_service()
+            download_csv_from_drive(drive_service)
+        except Exception as e:
+            log(f"ERROR pre-loading CSV from Drive: {e}")
+
     # Retry logic — tries each feed up to 3 times with increasing wait between attempts
     session = requests.Session()
     retry_strategy = Retry(
