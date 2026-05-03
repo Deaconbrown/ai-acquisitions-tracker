@@ -10,6 +10,11 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 from datetime import datetime
+import pickle
+import io
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
+from google.auth.transport.requests import Request
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
 # Paths — adjust if you move the project folder
@@ -17,6 +22,11 @@ BASE_DIR    = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01]
 CONFIG_FILE = os.path.join(BASE_DIR, "[04] Config", "sources.json")
 DATA_FILE   = os.path.join(BASE_DIR, "[02] Data", "acquisitions.csv")
 LOG_FILE    = os.path.join(BASE_DIR, "[03] Logs", "scraper_log.txt")
+
+# Google Drive settings
+DRIVE_TOKEN_PATH = r"C:\Users\Arran\.claude\credentials\personal_drive_token.pickle"
+DRIVE_FOLDER_NAME = "AI Acquisitions Tracker"
+DRIVE_FILE_NAME = "acquisitions.csv"
 
 # ── LOAD CONFIG ──────────────────────────────────────────────────────────────
 # Reads your sources.json file so keywords, companies and feeds are all
@@ -37,6 +47,59 @@ def log(message):
     print(full_message)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(full_message + "\n")
+
+def get_drive_service():
+    # Loads the saved token and refreshes it if expired
+    with open(DRIVE_TOKEN_PATH, "rb") as f:
+        creds = pickle.load(f)
+    if creds.expired and creds.refresh_token:
+        creds.refresh(Request())
+        with open(DRIVE_TOKEN_PATH, "wb") as f:
+            pickle.dump(creds, f)
+        log("Drive token refreshed.")
+    return build("drive", "v3", credentials=creds)
+
+def upload_to_drive(service):
+    # Uploads the local CSV to Google Drive
+    # If the file already exists on Drive it updates it — never duplicates
+    try:
+        # Check if file already exists on Drive
+        results = service.files().list(
+            q=f"name='{DRIVE_FILE_NAME}' and trashed=false",
+            fields="files(id, name)"
+        ).execute()
+        files = results.get("files", [])
+
+        # Read local CSV into memory
+        with open(DATA_FILE, "rb") as f:
+            file_content = f.read()
+
+        media = MediaIoBaseUpload(
+            io.BytesIO(file_content),
+            mimetype="text/csv",
+            resumable=False
+        )
+
+        if files:
+            # File exists — update it
+            file_id = files[0]["id"]
+            service.files().update(
+                fileId=file_id,
+                media_body=media
+            ).execute()
+            log(f"Drive CSV updated (file ID: {file_id})")
+        else:
+            # File does not exist — create it
+            file_metadata = {"name": DRIVE_FILE_NAME}
+            created = service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields="id"
+            ).execute()
+            log(f"Drive CSV created (file ID: {created.get('id')})")
+
+    except Exception as e:
+        log(f"ERROR uploading to Drive: {e}")
 
 # ── CSV SETUP ────────────────────────────────────────────────────────────────
 # Creates the CSV file with headers if it doesn't already exist
@@ -140,7 +203,14 @@ def scrape_feeds():
         except Exception as e:
             log(f"ERROR on {feed_url}: {e}")
 
-    log(f"── Run complete. {total_found} new saved, {total_skipped} skipped. ──\n")
+    log(f"── Run complete. {total_found} new saved, {total_skipped} skipped. ──")
+    # Upload latest CSV to Google Drive after every run
+    try:
+        drive_service = get_drive_service()
+        upload_to_drive(drive_service)
+    except Exception as e:
+        log(f"ERROR connecting to Drive: {e}")
+    log("── Drive sync complete. ──\n")
 
 # ── RUN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
