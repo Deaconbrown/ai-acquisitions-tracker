@@ -1,0 +1,41 @@
+name: AI Acquisitions Scraper
+
+on:
+  schedule:
+    # Runs every day at 08:00 UTC (09:00 UK time)
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 pandas yfinance google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client lxml
+
+      - name: Write Drive token from secret
+        run: |
+          echo "${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}" | base64 --decode > /tmp/personal_drive_token.pickle
+
+      - name: Write sources config from secret
+        run: |
+          echo "${{ secrets.SOURCES_JSON_B64 }}" | base64 --decode > /tmp/sources.json
+
+      - name: Run scraper
+        run: |
+          python "[01] Scripts/scraper.py"
+        env:
+          GITHUB_ACTIONS: true
+          DRIVE_TOKEN_PATH: /tmp/personal_drive_token.pickle
+          CONFIG_FILE_PATH: /tmp/sources.json

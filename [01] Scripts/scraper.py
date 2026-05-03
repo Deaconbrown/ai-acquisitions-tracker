@@ -17,14 +17,23 @@ from googleapiclient.http import MediaIoBaseUpload
 from google.auth.transport.requests import Request
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
-# Paths — adjust if you move the project folder
-BASE_DIR    = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
-CONFIG_FILE = os.path.join(BASE_DIR, "[04] Config", "sources.json")
-DATA_FILE   = os.path.join(BASE_DIR, "[02] Data", "acquisitions.csv")
-LOG_FILE    = os.path.join(BASE_DIR, "[03] Logs", "scraper_log.txt")
+# Detect whether running in GitHub Actions or locally
+RUNNING_IN_CLOUD = os.environ.get("GITHUB_ACTIONS") == "true"
+
+if RUNNING_IN_CLOUD:
+    # Cloud paths — passed in as environment variables by the workflow
+    CONFIG_FILE = os.environ.get("CONFIG_FILE_PATH", "/tmp/sources.json")
+    DATA_FILE   = "/tmp/acquisitions.csv"
+    LOG_FILE    = "/tmp/scraper_log.txt"
+else:
+    # Local Windows paths
+    BASE_DIR    = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
+    CONFIG_FILE = os.path.join(BASE_DIR, "[04] Config", "sources.json")
+    DATA_FILE   = os.path.join(BASE_DIR, "[02] Data", "acquisitions.csv")
+    LOG_FILE    = os.path.join(BASE_DIR, "[03] Logs", "scraper_log.txt")
 
 # Google Drive settings
-DRIVE_TOKEN_PATH = r"C:\Users\Arran\.claude\credentials\personal_drive_token.pickle"
+DRIVE_TOKEN_PATH = os.environ.get("DRIVE_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\personal_drive_token.pickle")
 DRIVE_FOLDER_NAME = "AI Acquisitions Tracker"
 DRIVE_FILE_NAME = "acquisitions.csv"
 
