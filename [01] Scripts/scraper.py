@@ -183,6 +183,13 @@ def is_relevant(text):
 # Fetches each RSS feed, reads every article, checks if it is relevant,
 # and saves matches to the CSV
 def scrape_feeds():
+    # Log rotation — keep last 500 lines to prevent unbounded growth
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        if len(lines) > 500:
+            with open(LOG_FILE, "w", encoding="utf-8") as f:
+                f.writelines(lines[-500:])
     log("── Scraper run started ──")
 
     # If running in cloud — download existing CSV from Drive first
@@ -249,9 +256,10 @@ def scrape_feeds():
     try:
         drive_service = get_drive_service()
         upload_to_drive(drive_service)
+        log("── Drive sync complete. ──\n")
     except Exception as e:
         log(f"ERROR connecting to Drive: {e}")
-    log("── Drive sync complete. ──\n")
+        log("── Drive sync FAILED. ──\n")
 
 # ── RUN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
