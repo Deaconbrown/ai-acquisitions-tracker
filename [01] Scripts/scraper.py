@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 sys.stdout.reconfigure(encoding="utf-8")
 import warnings
@@ -234,6 +235,17 @@ def scrape_feeds():
                 title_text   = title.get_text(strip=True)   if title   else ""
                 summary_text = summary.get_text(strip=True) if summary else ""
                 link_text    = link.get_text(strip=True)    if link    else ""
+
+                # Google News wraps real URLs inside a redirect — extract the real one
+                if "news.google.com" in feed_url:
+                    # Extract real URL from href in the summary HTML
+                    real_url_match = re.search(r'href="(https?://(?!news\.google)[^"]+)"', summary.decode_contents() if hasattr(summary, 'decode_contents') else "")
+                    if real_url_match:
+                        link_text = real_url_match.group(1)
+                    # Extract clean text summary — strip all HTML tags
+                    summary_text = re.sub(r'<[^>]+>', '', str(summary)).strip()
+                    # Clean up any leftover whitespace
+                    summary_text = re.sub(r'\s+', ' ', summary_text).strip()
 
                 combined = f"{title_text} {summary_text}"
 
