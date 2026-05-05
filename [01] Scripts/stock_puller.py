@@ -105,11 +105,16 @@ def run():
     log("── Stock puller started ──")
     all_rows = []
 
+    # Deduplicate by ticker + date before pulling from yfinance
+    # Prevents pulling the same stock window multiple times when a company
+    # appears in more than one headline on the same date
+    already_pulled = set()
+
     with open(ACQUISITIONS, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             headline = row["Headline"]
-            date     = row["Date Found"]
+            date     = row["Date Found"][:10]
             matches  = find_tickers_in_headline(headline)
 
             if not matches:
@@ -117,6 +122,11 @@ def run():
                 continue
 
             for company, ticker in matches:
+                pull_key = (ticker, date)
+                if pull_key in already_pulled:
+                    log(f"SKIPPED duplicate pull: {ticker} for {date}")
+                    continue
+                already_pulled.add(pull_key)
                 rows = pull_stock_data(ticker, company, headline, date)
                 all_rows.extend(rows)
 
