@@ -293,19 +293,24 @@ def already_saved(url, title):
         if url in content:
             return True
         # Headline similarity check — strips common words and compares core terms
-        title_words = set(title.lower().split())
         common_words = {"the","a","an","is","in","on","at","to","of","and","or","for","with","that","this","it","as","by","from","was","are","be","has","have","its","may","just","why","how","what","when","who","would","could","about","after","says","said","new"}
-        title_core = title_words - common_words
+
+        # Strip source suffix e.g. " - MarketWatch" or " - MacDailyNews"
+        # before comparing so outlet names don't dilute the overlap score
+        clean_title = re.sub(r'\s*-\s*\S+\s*$', '', title).strip()
+        title_core = set(clean_title.lower().split()) - common_words
+
         with open(DATA_FILE, "r", encoding="utf-8") as f2:
             reader = csv.reader(f2)
             next(reader, None)  # skip header
             for row in reader:
                 if len(row) < 2:
                     continue
-                saved_words = set(row[1].lower().split()) - common_words
+                clean_saved = re.sub(r'\s*-\s*\S+\s*$', '', row[1]).strip()
+                saved_words = set(clean_saved.lower().split()) - common_words
                 if len(title_core) > 0:
                     overlap = len(title_core & saved_words) / len(title_core)
-                    if overlap >= 0.75:
+                    if overlap >= 0.70:
                         return True
     return False
 
