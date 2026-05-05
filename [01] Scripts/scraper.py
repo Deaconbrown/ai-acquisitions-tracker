@@ -152,7 +152,7 @@ def send_gmail_alert(subject, body):
             with open(GMAIL_TOKEN_PATH, "wb") as f:
                 pickle.dump(creds, f)
 
-        service = gmail_build("gmail", "v1", credentials=creds)
+        service = gmail_build("gmail", "v1", credentials=creds, cache_discovery=False)
 
         message = MIMEText(body, "plain")
         message["to"]      = ALERT_TO
@@ -160,7 +160,7 @@ def send_gmail_alert(subject, body):
         message["subject"] = subject
 
         raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
-        service.messages().send(userId="me", body={"raw": raw}).execute()
+        service.users().messages().send(userId="me", body={"raw": raw}).execute()
         log(f"Alert email sent: {subject}")
 
     except Exception as e:
