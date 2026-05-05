@@ -142,7 +142,7 @@ def upload_to_drive(service):
     except Exception as e:
         log(f"ERROR uploading to Drive: {e}")
 
-def send_gmail_alert(subject, body):
+def send_gmail_alert(subject, body, summary_text="", date_found="", feed_url="", link_text=""):
     # Sends an email alert via Gmail API when a new acquisition is found
     try:
         with open(GMAIL_TOKEN_PATH, "rb") as f:
@@ -411,7 +411,14 @@ def scrape_feeds():
                             f"Open your acquisitions CSV on Google Drive to review:\n"
                             f"https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn\n"
                         )
-                        send_gmail_alert(alert_subject, alert_body)
+                        send_gmail_alert(
+                            alert_subject,
+                            alert_body,
+                            summary_text=summary_text,
+                            date_found=date_found,
+                            feed_url=feed_url,
+                            link_text=link_text
+                        )
 
         except Exception as e:
             log(f"ERROR on {feed_url}: {e}")
