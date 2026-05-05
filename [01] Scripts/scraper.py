@@ -15,6 +15,7 @@ import pickle
 import io
 import base64
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from googleapiclient.discovery import build
 from googleapiclient.discovery import build as gmail_build
 from googleapiclient.http import MediaIoBaseUpload
@@ -154,12 +155,116 @@ def send_gmail_alert(subject, body):
 
         service = gmail_build("gmail", "v1", credentials=creds, cache_discovery=False)
 
-        message = MIMEText(body, "plain")
+        message = MIMEMultipart("alternative")
         message["to"]      = ALERT_TO
         message["from"]    = ALERT_FROM
         message["subject"] = subject
 
-        raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        # Plain text fallback
+        plain_part = MIMEText(body, "plain")
+
+        # HTML version — XDA newsletter inspired style
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,sans-serif;">
+
+  <!-- Wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;padding:20px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- Header -->
+        <tr>
+          <td style="background-color:#1a1a2e;padding:24px 32px;border-radius:8px 8px 0 0;">
+            <p style="margin:0;font-size:11px;color:#8888aa;letter-spacing:2px;text-transform:uppercase;">AI Acquisitions Tracker</p>
+            <h1 style="margin:8px 0 0 0;font-size:22px;color:#ffffff;font-weight:700;">New Acquisition Alert</h1>
+          </td>
+        </tr>
+
+        <!-- Date bar -->
+        <tr>
+          <td style="background-color:#16213e;padding:10px 32px;">
+            <p style="margin:0;font-size:12px;color:#aaaacc;letter-spacing:1px;">{datetime.now().strftime('%B %d, %Y — %H:%M')}</p>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="background-color:#ffffff;padding:32px;">
+
+            <!-- Headline -->
+            <h2 style="margin:0 0 16px 0;font-size:20px;color:#1a1a2e;line-height:1.4;font-weight:700;">
+              {subject.replace('AI Acquisition Alert: ', '')}
+            </h2>
+
+            <!-- Divider -->
+            <hr style="border:none;border-top:2px solid #f0f0f0;margin:0 0 24px 0;">
+
+            <!-- Summary -->
+            <p style="margin:0 0 24px 0;font-size:15px;color:#444444;line-height:1.7;">
+              {summary_text[:400]}
+            </p>
+
+            <!-- Details table -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f9ff;border-radius:6px;padding:0;margin-bottom:24px;">
+              <tr>
+                <td style="padding:14px 20px;border-bottom:1px solid #e8e8f0;">
+                  <span style="font-size:11px;color:#8888aa;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Date Detected</span>
+                  <span style="font-size:14px;color:#1a1a2e;font-weight:600;">{date_found}</span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 20px;">
+                  <span style="font-size:11px;color:#8888aa;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Source Feed</span>
+                  <span style="font-size:14px;color:#1a1a2e;font-weight:600;">{feed_url}</span>
+                </td>
+              </tr>
+            </table>
+
+            <!-- CTA Button -->
+            <table cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr>
+                <td style="background-color:#1a1a2e;border-radius:6px;padding:0;">
+                  <a href="{link_text}" style="display:inline-block;padding:14px 28px;font-size:14px;color:#ffffff;text-decoration:none;font-weight:700;letter-spacing:0.5px;">Read Full Article →</a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Drive link -->
+            <p style="margin:0;font-size:13px;color:#888888;">
+              View your full acquisitions dataset →
+              <a href="https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn" style="color:#4444cc;">Google Drive CSV</a>
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 8px 8px;">
+            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">
+              AI Acquisitions Tracker · Automated alert · arranwilliams@gmail.com
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+
+</body>
+</html>
+"""
+        html_part = MIMEText(html_body, "html")
+        message.attach(plain_part)
+        message.attach(html_part)
+
+        raw = base64.urlsafe_b64encode(message.as_string().encode("utf-8")).decode()
         service.users().messages().send(userId="me", body={"raw": raw}).execute()
         log(f"Alert email sent: {subject}")
 
