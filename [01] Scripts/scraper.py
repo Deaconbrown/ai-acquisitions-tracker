@@ -46,7 +46,7 @@ DRIVE_FILE_NAME = "acquisitions.csv"
 GMAIL_TOKEN_PATH = os.environ.get("GMAIL_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\gmail_send_token.pickle")
 ALERT_FROM       = "arranwilliams@gmail.com"
 ALERT_TO         = "arranwilliams@gmail.com"
-# Maximum individual alerts per run — above this sends one digest instead
+# Email mode threshold — 0 stories: no email. 1: individual alert. 2–3: mini-digest. 4+: full digest.
 ALERT_THRESHOLD  = 3
 
 # ── LOAD CONFIG ──────────────────────────────────────────────────────────────
