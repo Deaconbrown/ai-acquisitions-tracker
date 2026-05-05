@@ -13,7 +13,10 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pickle
 import io
+import base64
+from email.mime.text import MIMEText
 from googleapiclient.discovery import build
+from googleapiclient.discovery import build as gmail_build
 from googleapiclient.http import MediaIoBaseUpload
 from google.auth.transport.requests import Request
 
@@ -37,6 +40,11 @@ else:
 DRIVE_TOKEN_PATH = os.environ.get("DRIVE_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\personal_drive_token.pickle")
 DRIVE_FOLDER_NAME = "AI Acquisitions Tracker"
 DRIVE_FILE_NAME = "acquisitions.csv"
+
+# Gmail notification settings
+GMAIL_TOKEN_PATH = os.environ.get("GMAIL_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\gmail_send_token.pickle")
+ALERT_FROM       = "arranwilliams@gmail.com"
+ALERT_TO         = "arranwilliams@gmail.com"
 
 # ── LOAD CONFIG ──────────────────────────────────────────────────────────────
 # Reads your sources.json file so keywords, companies and feeds are all
@@ -132,6 +140,31 @@ def upload_to_drive(service):
 
     except Exception as e:
         log(f"ERROR uploading to Drive: {e}")
+
+def send_gmail_alert(subject, body):
+    # Sends an email alert via Gmail API when a new acquisition is found
+    try:
+        with open(GMAIL_TOKEN_PATH, "rb") as f:
+            creds = pickle.load(f)
+
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            with open(GMAIL_TOKEN_PATH, "wb") as f:
+                pickle.dump(creds, f)
+
+        service = gmail_build("gmail", "v1", credentials=creds)
+
+        message = MIMEText(body, "plain")
+        message["to"]      = ALERT_TO
+        message["from"]    = ALERT_FROM
+        message["subject"] = subject
+
+        raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+        service.messages().send(userId="me", body={"raw": raw}).execute()
+        log(f"Alert email sent: {subject}")
+
+    except Exception as e:
+        log(f"ERROR sending Gmail alert: {e}")
 
 # ── CSV SETUP ────────────────────────────────────────────────────────────────
 # Creates the CSV file with headers if it doesn't already exist
@@ -260,6 +293,20 @@ def scrape_feeds():
                             writer.writerow([date_found, title_text, summary_text, link_text, feed_url])
                         log(f"MATCH SAVED: {title_text}")
                         total_found += 1
+
+                        # Send Gmail alert for every new match found
+                        alert_subject = f"AI Acquisition Alert: {title_text[:60]}"
+                        alert_body = (
+                            f"New AI acquisition story detected.\n\n"
+                            f"Headline: {title_text}\n"
+                            f"Date found: {date_found}\n"
+                            f"Summary: {summary_text[:300]}\n\n"
+                            f"Source: {link_text}\n"
+                            f"Feed: {feed_url}\n\n"
+                            f"Open your acquisitions CSV on Google Drive to review:\n"
+                            f"https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn\n"
+                        )
+                        send_gmail_alert(alert_subject, alert_body)
 
         except Exception as e:
             log(f"ERROR on {feed_url}: {e}")

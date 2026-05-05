@@ -28,6 +28,10 @@ jobs:
         run: |
           echo "${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}" | base64 --decode > /tmp/personal_drive_token.pickle
 
+      - name: Write Gmail token from secret
+        run: |
+          echo "${{ secrets.GMAIL_SEND_TOKEN_B64 }}" | base64 --decode > /tmp/gmail_send_token.pickle
+
       - name: Write sources config from secret
         run: |
           echo "${{ secrets.SOURCES_JSON_B64 }}" | base64 --decode > /tmp/sources.json
@@ -39,3 +43,4 @@ jobs:
           GITHUB_ACTIONS: true
           DRIVE_TOKEN_PATH: /tmp/personal_drive_token.pickle
           CONFIG_FILE_PATH: /tmp/sources.json
+          GMAIL_TOKEN_PATH: /tmp/gmail_send_token.pickle
