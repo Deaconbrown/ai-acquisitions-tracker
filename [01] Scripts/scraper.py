@@ -46,6 +46,8 @@ DRIVE_FILE_NAME = "acquisitions.csv"
 GMAIL_TOKEN_PATH = os.environ.get("GMAIL_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\gmail_send_token.pickle")
 ALERT_FROM       = "arranwilliams@gmail.com"
 ALERT_TO         = "arranwilliams@gmail.com"
+# Maximum individual alerts per run — above this sends one digest instead
+ALERT_THRESHOLD  = 3
 
 # ── LOAD CONFIG ──────────────────────────────────────────────────────────────
 # Reads your sources.json file so keywords, companies and feeds are all
@@ -359,6 +361,7 @@ def scrape_feeds():
     initialise_csv()
     total_found = 0
     total_skipped = 0
+    new_stories = []
 
     for feed_url in RSS_FEEDS:
         log(f"Checking feed: {feed_url}")
@@ -403,32 +406,35 @@ def scrape_feeds():
                             writer.writerow([date_found, title_text, summary_text, link_text, feed_url])
                         log(f"MATCH SAVED: {title_text}")
                         total_found += 1
+                        new_stories.append({"title": title_text, "link": link_text})
 
-                        # Send Gmail alert for every new match found
-                        alert_subject = f"AI Acquisition Alert: {title_text[:60]}"
-                        alert_body = (
-                            f"New AI acquisition story detected.\n\n"
-                            f"Headline: {title_text}\n"
-                            f"Date found: {date_found}\n"
-                            f"Summary: {summary_text[:300]}\n\n"
-                            f"Source: {link_text}\n"
-                            f"Feed: {feed_url}\n\n"
-                            f"Open your acquisitions CSV on Google Drive to review:\n"
-                            f"https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn\n"
-                        )
-                        send_gmail_alert(
-                            alert_subject,
-                            alert_body,
-                            summary_text=summary_text,
-                            date_found=date_found,
-                            feed_url=feed_url,
-                            link_text=link_text
-                        )
+                        # Only send individual alerts if under threshold
+                        if total_found <= ALERT_THRESHOLD:
+                            alert_subject = f"AI Acquisition Alert: {title_text[:60]}"
+                            alert_body = (
+                                f"New AI acquisition story detected.\n\n"
+                                f"Headline: {title_text}\n"
+                                f"Date found: {date_found}\n"
+                                f"Summary: {summary_text[:300]}\n\n"
+                                f"Source: {link_text}\n"
+                                f"Feed: {feed_url}\n\n"
+                                f"Open your acquisitions CSV on Google Drive to review:\n"
+                                f"https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn\n"
+                            )
+                            send_gmail_alert(
+                                alert_subject,
+                                alert_body,
+                                summary_text=summary_text,
+                                date_found=date_found,
+                                feed_url=feed_url,
+                                link_text=link_text
+                            )
 
         except Exception as e:
             log(f"ERROR on {feed_url}: {e}")
 
     log(f"── Run complete. {total_found} new saved, {total_skipped} skipped. ──")
+
     # Upload latest CSV to Google Drive after every run
     try:
         drive_service = get_drive_service()
@@ -437,6 +443,60 @@ def scrape_feeds():
     except Exception as e:
         log(f"ERROR connecting to Drive: {e}")
         log("── Drive sync FAILED. ──\n")
+
+    # Email logic — send digest if over threshold, individual alerts if under
+    if total_found > ALERT_THRESHOLD:
+        digest_subject = f"AI Acquisition Digest — {total_found} new stories found"
+        digest_body = (
+            f"{total_found} new AI acquisition stories were detected in this run.\n\n"
+            f"Top stories:\n"
+        )
+        for i, story in enumerate(new_stories[:10]):
+            digest_body += f"\n{i+1}. {story['title']}\n   {story['link']}\n"
+        if total_found > 10:
+            digest_body += f"\n...and {total_found - 10} more. Open your Google Drive CSV for the full list:\nhttps://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn\n"
+
+        html_digest = f"""<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;padding:20px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td style="background-color:#1a1a2e;padding:24px 32px;border-radius:8px 8px 0 0;">
+            <p style="margin:0;font-size:11px;color:#8888aa;letter-spacing:2px;text-transform:uppercase;">AI Acquisitions Tracker</p>
+            <h1 style="margin:8px 0 0 0;font-size:22px;color:#ffffff;font-weight:500;">Acquisition digest — {total_found} new stories</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color:#16213e;padding:10px 32px;">
+            <p style="margin:0;font-size:12px;color:#aaaacc;letter-spacing:1px;">{datetime.now().strftime('%B %d, %Y — %H:%M')}</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color:#ffffff;padding:32px;">
+            <p style="margin:0 0 24px 0;font-size:15px;color:#444444;line-height:1.7;">
+              {total_found} new AI acquisition stories were detected in this run. Here are the top stories:
+            </p>
+            {''.join([f'<div style="border-left:3px solid #1a1a2e;padding:12px 16px;margin-bottom:16px;background:#f8f9ff;border-radius:0 6px 6px 0;"><p style="margin:0 0 6px 0;font-size:15px;color:#1a1a2e;font-weight:500;">{story["title"]}</p><a href="{story["link"]}" style="font-size:13px;color:#4444cc;">Read article →</a></div>' for story in new_stories[:10]])}
+            <p style="margin:24px 0 0 0;font-size:13px;color:#888888;">
+              View full dataset → <a href="https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn" style="color:#4444cc;">Google Drive CSV</a>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 8px 8px;">
+            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">AI Acquisitions Tracker · Digest alert · arranwilliams@gmail.com</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>"""
+        send_gmail_alert(digest_subject, digest_body, link_text="https://drive.google.com/file/d/110_g-AuLvfKskFnyR96dWfB_OUW8Uodn")
+        log(f"Digest email sent — {total_found} stories.")
 
 # ── RUN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
