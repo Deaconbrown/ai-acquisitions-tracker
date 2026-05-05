@@ -1,0 +1,21 @@
+{
+  "OpenAI": null,
+  "Anthropic": null,
+  "Google DeepMind": "GOOGL",
+  "Microsoft": "MSFT",
+  "Meta AI": "META",
+  "Apple": "AAPL",
+  "Amazon": "AMZN",
+  "Nvidia": "NVDA",
+  "Mistral": null,
+  "Cohere": null,
+  "Stability AI": null,
+  "Hugging Face": null,
+  "Perplexity": null,
+  "xAI": null,
+  "Suno": null,
+  "Runway": null,
+  "ElevenLabs": null,
+  "Replit": null,
+  "Cursor": null
+}
