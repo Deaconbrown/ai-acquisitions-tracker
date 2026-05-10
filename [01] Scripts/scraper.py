@@ -144,6 +144,48 @@ def upload_to_drive(service):
     except Exception as e:
         log(f"ERROR uploading to Drive: {e}")
 
+def upload_report_to_drive():
+    # Uploads stock_data.csv and the pattern report to Google Drive after a cloud run.
+    # Follows the same update-or-create pattern as upload_to_drive().
+    try:
+        service = get_drive_service()
+    except Exception as e:
+        log(f"ERROR connecting to Drive for report upload: {e}")
+        return
+
+    report_filename = f"pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md"
+    files_to_upload = [
+        ("/tmp/stock_data.csv",       "stock_data.csv"),
+        (f"/tmp/{report_filename}",   report_filename),
+    ]
+
+    for local_path, drive_name in files_to_upload:
+        if not os.path.exists(local_path):
+            log(f"  [DRIVE UPLOAD] SKIPPED — {drive_name} not found at {local_path}")
+            continue
+        try:
+            results = service.files().list(
+                q=f"name='{drive_name}' and trashed=false",
+                fields="files(id, name)"
+            ).execute()
+            existing = results.get("files", [])
+
+            with open(local_path, "rb") as f:
+                file_content = f.read()
+
+            mimetype = "text/csv" if drive_name.endswith(".csv") else "text/markdown"
+            media = MediaIoBaseUpload(io.BytesIO(file_content), mimetype=mimetype, resumable=False)
+
+            if existing:
+                service.files().update(fileId=existing[0]["id"], media_body=media).execute()
+                log(f"  [DRIVE UPLOAD] {drive_name} updated on Drive")
+            else:
+                service.files().create(body={"name": drive_name}, media_body=media, fields="id").execute()
+                log(f"  [DRIVE UPLOAD] {drive_name} created on Drive")
+
+        except Exception as e:
+            log(f"  [DRIVE UPLOAD ERROR] {drive_name}: {e}")
+
 def send_gmail_alert(subject, body, summary_text="", date_found="", feed_url="", link_text="", html_override=None):
     # Sends an email alert via Gmail API when a new acquisition is found
     try:
@@ -561,6 +603,9 @@ def trigger_downstream(total_found):
     import subprocess
     scripts_dir = os.path.dirname(os.path.abspath(__file__))
 
+    stock_ok = False
+    analyser_ok = False
+
     log(f"── Auto-triggering stock puller ({total_found} new stories found) ──")
     try:
         result = subprocess.run(
@@ -568,6 +613,7 @@ def trigger_downstream(total_found):
             capture_output=True, text=True, encoding="utf-8"
         )
         if result.returncode == 0:
+            stock_ok = True
             log("── Stock puller completed successfully ──")
         else:
             log(f"── Stock puller FAILED (exit {result.returncode}): {result.stderr[:300]}")
@@ -581,11 +627,18 @@ def trigger_downstream(total_found):
             capture_output=True, text=True, encoding="utf-8"
         )
         if result.returncode == 0:
+            analyser_ok = True
             log("── Pattern analyser completed successfully ──")
         else:
             log(f"── Pattern analyser FAILED (exit {result.returncode}): {result.stderr[:300]}")
     except Exception as e:
         log(f"ERROR launching pattern analyser: {e}")
+
+    if RUNNING_IN_CLOUD and stock_ok and analyser_ok:
+        log("── Uploading report and stock data to Drive ──")
+        upload_report_to_drive()
+    else:
+        log("── Local run — Drive upload skipped (files already on disk) ──")
 
 # ── RUN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
