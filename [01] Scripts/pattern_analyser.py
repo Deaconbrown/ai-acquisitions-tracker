@@ -25,8 +25,8 @@ else:
 _SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
 T212_MAP_FILE = os.path.join(_SCRIPT_DIR, "..", "[04] Config", "tickers_t212.json")
 
-# Load .env file for local runs — sets T212_API_KEY and T212_API_SECRET if present
-_env_path = os.path.join(_SCRIPT_DIR, "..", ".env")
+# Load .env file for local runs — stored outside synced folders for security
+_env_path = os.path.expanduser(r"~\.claude\credentials\ai_acquisitions_tracker.env")
 if os.path.exists(_env_path):
     with open(_env_path) as _f:
         for _line in _f:
