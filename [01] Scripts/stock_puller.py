@@ -8,11 +8,20 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
-BASE_DIR        = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
-ACQUISITIONS    = os.path.join(BASE_DIR, "[02] Data", "acquisitions.csv")
-TICKERS_FILE    = os.path.join(BASE_DIR, "[04] Config", "tickers.json")
-STOCK_DATA_FILE = os.path.join(BASE_DIR, "[02] Data", "stock_data.csv")
-LOG_FILE        = os.path.join(BASE_DIR, "[03] Logs", "stock_puller_log.txt")
+RUNNING_IN_CLOUD = os.environ.get("GITHUB_ACTIONS") == "true"
+
+if RUNNING_IN_CLOUD:
+    _SCRIPT_DIR     = os.path.dirname(os.path.abspath(__file__))
+    ACQUISITIONS    = "/tmp/acquisitions.csv"
+    TICKERS_FILE    = os.path.join(_SCRIPT_DIR, "..", "[04] Config", "tickers.json")
+    STOCK_DATA_FILE = "/tmp/stock_data.csv"
+    LOG_FILE        = "/tmp/stock_puller_log.txt"
+else:
+    BASE_DIR        = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
+    ACQUISITIONS    = os.path.join(BASE_DIR, "[02] Data", "acquisitions.csv")
+    TICKERS_FILE    = os.path.join(BASE_DIR, "[04] Config", "tickers.json")
+    STOCK_DATA_FILE = os.path.join(BASE_DIR, "[02] Data", "stock_data.csv")
+    LOG_FILE        = os.path.join(BASE_DIR, "[03] Logs", "stock_puller_log.txt")
 
 # Days to look before and after the acquisition date
 DAYS_BEFORE = 14

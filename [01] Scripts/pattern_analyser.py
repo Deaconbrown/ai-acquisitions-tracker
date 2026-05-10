@@ -8,10 +8,17 @@ from collections import defaultdict
 sys.stdout.reconfigure(encoding="utf-8")
 
 # ── CONFIG ──────────────────────────────────────────────────────────────────
-BASE_DIR        = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
-STOCK_DATA_FILE = os.path.join(BASE_DIR, "[02] Data", "stock_data.csv")
-REPORT_FILE     = os.path.join(BASE_DIR, "[05] Reports", f"pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md")
-LOG_FILE        = os.path.join(BASE_DIR, "[03] Logs", "pattern_analyser_log.txt")
+RUNNING_IN_CLOUD = os.environ.get("GITHUB_ACTIONS") == "true"
+
+if RUNNING_IN_CLOUD:
+    STOCK_DATA_FILE = "/tmp/stock_data.csv"
+    REPORT_FILE     = f"/tmp/pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md"
+    LOG_FILE        = "/tmp/pattern_analyser_log.txt"
+else:
+    BASE_DIR        = r"H:\[01] Google\Google Drive Arran\[00] AI\[01] Claude Space\[01] Projects\[01] AI Acquisitions Tracker"
+    STOCK_DATA_FILE = os.path.join(BASE_DIR, "[02] Data", "stock_data.csv")
+    REPORT_FILE     = os.path.join(BASE_DIR, "[05] Reports", f"pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md")
+    LOG_FILE        = os.path.join(BASE_DIR, "[03] Logs", "pattern_analyser_log.txt")
 
 # Acquirer keywords — company must appear near these words to count as acquirer
 # This reduces false positives like "fighting Apple" matching as Apple acquiring
