@@ -2,6 +2,8 @@ import csv
 import os
 import sys
 import json
+import base64
+import requests
 from datetime import datetime
 from collections import defaultdict
 
@@ -19,6 +21,19 @@ else:
     STOCK_DATA_FILE = os.path.join(BASE_DIR, "[02] Data", "stock_data.csv")
     REPORT_FILE     = os.path.join(BASE_DIR, "[05] Reports", f"pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md")
     LOG_FILE        = os.path.join(BASE_DIR, "[03] Logs", "pattern_analyser_log.txt")
+
+_SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
+T212_MAP_FILE = os.path.join(_SCRIPT_DIR, "..", "[04] Config", "tickers_t212.json")
+
+# Load .env file for local runs — sets T212_API_KEY and T212_API_SECRET if present
+_env_path = os.path.join(_SCRIPT_DIR, "..", ".env")
+if os.path.exists(_env_path):
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith('#') and '=' in _line:
+                _k, _v = _line.split('=', 1)
+                os.environ.setdefault(_k.strip(), _v.strip())
 
 # Acquirer keywords — company must appear near these words to count as acquirer
 # This reduces false positives like "fighting Apple" matching as Apple acquiring
@@ -105,8 +120,60 @@ def calculate_movements(rows):
         "pct_change_total":     pct_change_total
     }
 
+# ── TRADING 212 PRICE FETCH ──────────────────────────────────────────────────
+def fetch_t212_prices():
+    """Calls T212 portfolio endpoint to get held positions, and loads ticker map
+    for availability info. Returns dict keyed by yfinance ticker."""
+    api_key    = os.environ.get("T212_API_KEY", "")
+    api_secret = os.environ.get("T212_API_SECRET", "")
+
+    if not api_key or not api_secret:
+        log("  [T212] Credentials not set — skipping T212 section")
+        return {}
+
+    try:
+        encoded = base64.b64encode(f'{api_key}:{api_secret}'.encode()).decode()
+        headers = {'Authorization': f'Basic {encoded}'}
+
+        if not os.path.exists(T212_MAP_FILE):
+            log("  [T212] tickers_t212.json not found — skipping")
+            return {}
+        with open(T212_MAP_FILE, 'r') as f:
+            t212_map = json.load(f)
+
+        r = requests.get('https://live.trading212.com/api/v0/equity/portfolio',
+                         headers=headers, timeout=10)
+        if r.status_code != 200:
+            log(f"  [T212] Portfolio fetch failed (HTTP {r.status_code}) — skipping")
+            return {}
+
+        held = {p['ticker']: p for p in r.json()}
+
+        result = {}
+        for yf_ticker, t212_ticker in t212_map.items():
+            position = held.get(t212_ticker)
+            if position:
+                result[yf_ticker] = {
+                    't212_ticker':   t212_ticker,
+                    'current_price': position.get('currentPrice'),
+                    'avg_price':     position.get('averagePrice'),
+                    'quantity':      position.get('quantity'),
+                    'ppl':           position.get('ppl'),
+                    'held':          True,
+                }
+            else:
+                result[yf_ticker] = {'t212_ticker': t212_ticker, 'held': False}
+
+        held_count = sum(1 for v in result.values() if v.get('held'))
+        log(f"  [T212] {held_count} tracked ticker(s) currently held on T212")
+        return result
+
+    except Exception as e:
+        log(f"  [T212 ERROR] {e}")
+        return {}
+
 # ── REPORT WRITER ─────────────────────────────────────────────────────────────
-def write_report(results):
+def write_report(results, t212_data=None):
     lines = []
     lines.append(f"# AI Acquisitions — Pattern Analysis Report")
     lines.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M')}")
@@ -137,6 +204,28 @@ def write_report(results):
             lines.append("")
             lines.append("---")
             lines.append("")
+
+    # ── Trading 212 section ──
+    if t212_data:
+        lines.append("## Trading 212 — Tracked Ticker Status")
+        lines.append(f"**Checked:** {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        lines.append("")
+        lines.append("| Ticker | T212 Available | Held | Qty | Avg Price | Current Price | P&L |")
+        lines.append("|:-------|:--------------|:-----|:----|:----------|:-------------|:----|")
+        for yf_ticker, data in sorted(t212_data.items()):
+            if data.get('held'):
+                qty   = round(data['quantity'], 4)
+                avg   = round(data['avg_price'], 4)
+                cur   = round(data['current_price'], 4)
+                ppl   = round(data['ppl'], 2)
+                lines.append(f"| {yf_ticker} | ✅ | ✅ Held | {qty} | ${avg} | ${cur} | {'+' if ppl >= 0 else ''}{ppl} |")
+            else:
+                lines.append(f"| {yf_ticker} | ✅ | — | — | — | — | — |")
+        lines.append("")
+        lines.append(f"*34 of 35 tracked tickers available on T212. SSNLF (Samsung OTC) not listed.*")
+        lines.append("")
+        lines.append("---")
+        lines.append("")
 
     with open(REPORT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
@@ -188,7 +277,8 @@ def run():
         })
         log(f"ANALYSED: {ticker} — total change {movements['pct_change_total']}%")
 
-    write_report(results)
+    t212_data = fetch_t212_prices()
+    write_report(results, t212_data)
     log(f"── Pattern analyser complete. {len(results)} events analysed. ──\n")
 
 if __name__ == "__main__":

@@ -44,3 +44,5 @@ jobs:
           DRIVE_TOKEN_PATH: /tmp/personal_drive_token.pickle
           CONFIG_FILE_PATH: /tmp/sources.json
           GMAIL_TOKEN_PATH: /tmp/gmail_send_token.pickle
+          T212_API_KEY: ${{ secrets.T212_API_KEY }}
+          T212_API_SECRET: ${{ secrets.T212_API_SECRET }}
