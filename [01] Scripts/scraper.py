@@ -552,6 +552,41 @@ def scrape_feeds():
         send_gmail_alert(digest_subject, digest_body, html_override=html_digest)
         log(f"Digest email sent — {total_found} stories.")
 
+    trigger_downstream(total_found)
+
+# ── AUTO-TRIGGER DOWNSTREAM ANALYSIS ────────────────────────────────────────
+def trigger_downstream(total_found):
+    if total_found == 0:
+        return
+    import subprocess
+    scripts_dir = os.path.dirname(os.path.abspath(__file__))
+
+    log(f"── Auto-triggering stock puller ({total_found} new stories found) ──")
+    try:
+        result = subprocess.run(
+            [sys.executable, os.path.join(scripts_dir, "stock_puller.py")],
+            capture_output=True, text=True, encoding="utf-8"
+        )
+        if result.returncode == 0:
+            log("── Stock puller completed successfully ──")
+        else:
+            log(f"── Stock puller FAILED (exit {result.returncode}): {result.stderr[:300]}")
+    except Exception as e:
+        log(f"ERROR launching stock puller: {e}")
+
+    log("── Auto-triggering pattern analyser ──")
+    try:
+        result = subprocess.run(
+            [sys.executable, os.path.join(scripts_dir, "pattern_analyser.py")],
+            capture_output=True, text=True, encoding="utf-8"
+        )
+        if result.returncode == 0:
+            log("── Pattern analyser completed successfully ──")
+        else:
+            log(f"── Pattern analyser FAILED (exit {result.returncode}): {result.stderr[:300]}")
+    except Exception as e:
+        log(f"ERROR launching pattern analyser: {e}")
+
 # ── RUN ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     scrape_feeds()
