@@ -488,12 +488,11 @@
       <div class="sn-headline">Follow the <em>signal.</em><br>Not the noise.</div>
       <div class="sn-subline">Every Monday morning, automated analysis of every AI acquisition deal of the week. Free, forever.</div>
       <div id="subscribe">
-        <div class="sn-form">
-          <input class="sn-email-input" type="email" id="emailInput" placeholder="your@email.com"/>
-          <button class="sn-join-btn" onclick="handleSubscribe()">Subscribe free →</button>
-        </div>
+        <form action="https://buttondown.com/api/emails/embed-subscribe/senaiai" method="post" class="sn-form" target="popupwindow" onsubmit="window.open('https://buttondown.com/senaiai','popupwindow')" >
+          <input class="sn-email-input" type="email" name="email" id="bd-email" placeholder="your@email.com"/>
+          <button class="sn-join-btn" type="submit">Subscribe free →</button>
+        </form>
         <div class="sn-form-note">No spam. Unsubscribe any time.</div>
-        <div class="sn-form-success" id="formSuccess">You are subscribed. See you Monday.</div>
       </div>
     </div>
   </div>
@@ -603,37 +602,6 @@
     <a href="https://buttondown.com/senaiai/unsubscribe" style="color:#2e2e2e;">Unsubscribe</a>
   </div>
 
-  <script>
-    function handleSubscribe() {
-      const email = document.getElementById('emailInput').value.trim();
-      if (!email || !email.includes('@')) {
-        document.getElementById('emailInput').focus();
-        return;
-      }
-
-      // POST to Buttondown subscribe API
-      fetch('https://api.buttondown.email/v1/subscribers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
-      })
-      .then(function(res) {
-        document.getElementById('emailInput').style.display = 'none';
-        document.querySelector('.sn-join-btn').style.display = 'none';
-        document.querySelector('.sn-form-note').style.display = 'none';
-        document.getElementById('formSuccess').style.display = 'block';
-      })
-      .catch(function() {
-        // Fallback: redirect to Buttondown subscribe page
-        window.open('https://buttondown.com/senaiai', '_blank');
-      });
-    }
-
-    // Allow Enter key to subscribe
-    document.getElementById('emailInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') handleSubscribe();
-    });
-  </script>
 
 </body>
 </html>
