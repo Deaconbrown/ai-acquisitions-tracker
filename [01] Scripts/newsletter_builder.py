@@ -100,14 +100,14 @@ def download_csv_from_drive(headers):
 def get_this_weeks_stories(csv_text):
     """
     Return stories published in the last 7 days.
-    CSV columns: title, url, summary, date, source
+    CSV columns: Date Found, Headline, Summary, Source URL, Feed
     """
     reader = csv.DictReader(io.StringIO(csv_text))
     cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=7)
     stories = []
 
     for row in reader:
-        raw_date = row.get("date", "").strip()
+        raw_date = row.get("Date Found", "").strip()
         if not raw_date:
             continue
         try:
@@ -117,7 +117,7 @@ def get_this_weeks_stories(csv_text):
         if pub_date >= cutoff:
             stories.append(row)
 
-    stories.sort(key=lambda r: r.get("date", ""), reverse=True)
+    stories.sort(key=lambda r: r.get("Date Found", ""), reverse=True)
     return stories
 
 
@@ -153,14 +153,14 @@ def build_newsletter_prompt(stories, week_start, week_end):
     """Build the user prompt containing all stories for this week."""
     stories_block = ""
     for i, story in enumerate(stories, 1):
-        article_text = fetch_article_text(story.get("url", ""))
+        article_text = fetch_article_text(story.get("Source URL", ""))
         stories_block += f"""
 Story {i}:
-Title: {story.get('title', '')}
-URL: {story.get('url', '')}
-Source: {story.get('source', '')}
-Date: {story.get('date', '')}
-Summary: {story.get('summary', '')}
+Title: {story.get('Headline', '')}
+URL: {story.get('Source URL', '')}
+Source: {story.get('Feed', '')}
+Date: {story.get('Date Found', '')}
+Summary: {story.get('Summary', '')}
 Article excerpt: {article_text if article_text else '(not available)'}
 ---"""
 
