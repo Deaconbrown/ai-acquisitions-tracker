@@ -431,7 +431,7 @@ def send_to_buttondown(subject, html_body):
         headers={
             "Authorization": f"Token {api_key}",
             "Content-Type": "application/json",
-            "X-Buttondown-Live-Dangerously": "yolo"
+            "X-Buttondown-Live-Dangerously": "true"
         },
         json={
             "subject": subject,
