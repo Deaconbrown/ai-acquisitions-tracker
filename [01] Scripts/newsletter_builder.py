@@ -35,9 +35,10 @@ from pathlib import Path
 DRIVE_CSV_NAME   = "acquisitions.csv"
 OUTPUT_DIR       = Path("newsletter")          # folder committed to GitHub
 ISSUES_DIR       = OUTPUT_DIR / "issues"
-ANTHROPIC_MODEL  = "claude-sonnet-4-20250514"
+ANTHROPIC_MODEL  = "claude-sonnet-4-6"
 MAX_ARTICLE_CHARS = 3000                       # chars fetched per article
 MIN_STORIES       = 1                          # skip run if fewer stories found
+MAX_STORIES       = 10                         # cap passed to Claude per issue
 
 
 # ---------------------------------------------------------------------------
@@ -479,6 +480,9 @@ def main():
     if len(stories) < MIN_STORIES:
         print(f"Fewer than {MIN_STORIES} stories found. Skipping this week.")
         return
+
+    stories = stories[:MAX_STORIES]
+    print(f"Using top {len(stories)} stories for this issue.")
 
     # 2. Call Anthropic API
     print("Calling Anthropic API to write newsletter...")
