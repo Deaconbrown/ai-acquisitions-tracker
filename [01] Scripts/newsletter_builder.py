@@ -430,7 +430,8 @@ def send_to_buttondown(subject, html_body):
         "https://api.buttondown.email/v1/emails",
         headers={
             "Authorization": f"Token {api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-Buttondown-Live-Dangerously": "yolo"
         },
         json={
             "subject": subject,
