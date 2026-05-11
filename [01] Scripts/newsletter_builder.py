@@ -26,6 +26,7 @@ import pickle
 import datetime
 import requests
 from pathlib import Path
+from render_email_html import render_email_html
 
 
 # ---------------------------------------------------------------------------
@@ -494,6 +495,7 @@ def main():
     # 3. Render HTML
     issue_number = get_issue_number()
     html = render_html(data, issue_number, week_start, week_end)
+    email_html = render_email_html(data, issue_number, week_start, week_end)
 
     # 4. Save HTML file
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -512,7 +514,7 @@ def main():
     # 5. Send to Buttondown
     subject = f"Senal AI, Issue {issue_number} · {week_start.strftime('%d %b')} to {week_end.strftime('%d %b %Y')}"
     print(f"Sending to Buttondown: {subject}")
-    send_to_buttondown(subject, html)
+    send_to_buttondown(subject, email_html)
 
     print("Done. Newsletter pipeline complete.")
 
