@@ -106,7 +106,7 @@ def get_this_weeks_stories(csv_text):
     CSV columns: Date Found, Headline, Summary, Source URL, Feed
     """
     reader = csv.DictReader(io.StringIO(csv_text))
-    cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+    cutoff = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - datetime.timedelta(days=7)
     stories = []
 
     for row in reader:
@@ -118,7 +118,7 @@ def get_this_weeks_stories(csv_text):
         except ValueError:
             continue
         if pub_date >= cutoff:
-            days_diff = (datetime.datetime.utcnow() - pub_date).days
+            days_diff = (datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - pub_date).days
             if days_diff == 0:
                 row["days_ago"] = "Today"
             elif days_diff == 1:
@@ -473,7 +473,7 @@ def get_issue_number():
 def main(web_only=False):
     print("Senal AI newsletter builder starting...")
 
-    week_end   = datetime.datetime.utcnow()
+    week_end   = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
     week_start = week_end - datetime.timedelta(days=7)
 
     # 1. Load stories from Drive CSV
@@ -523,8 +523,8 @@ def main(web_only=False):
 
     # 5. Send to Buttondown
     subject = f"Señal AI · Issue {issue_number} · {week_start.strftime('%d %b')} to {week_end.strftime('%d %b %Y')}"
-    print(f"Sending to Buttondown: {subject}")
     if not web_only:
+        print(f"Sending to Buttondown: {subject}")
         send_to_buttondown(subject, email_html)
 
     print("Done. Newsletter pipeline complete.")
