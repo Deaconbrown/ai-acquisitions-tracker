@@ -610,10 +610,11 @@ def _update_archive_html(data, issue_number, week_end):
     print(f"Updated: {archive_path}")
 
 
-def update_public_pages(data, issue_number, week_end):
+def update_public_pages(data, issue_number, week_end, update_archive=True):
     """Update public/index.html and public/archive.html with the new issue."""
     _update_index_html(data, issue_number)
-    _update_archive_html(data, issue_number, week_end)
+    if update_archive:
+        _update_archive_html(data, issue_number, week_end)
 
 
 # ---------------------------------------------------------------------------
@@ -680,7 +681,7 @@ def main(web_only=False):
         newsletter_path.write_text(html, encoding="utf-8")
         print(f"Saved: {newsletter_path}")
 
-    update_public_pages(data, issue_number, week_end)
+    update_public_pages(data, issue_number, week_end, update_archive=not web_only)
 
     # Also write as latest.html for easy linking
     latest_path = PUBLIC_DIR / "latest.html"
