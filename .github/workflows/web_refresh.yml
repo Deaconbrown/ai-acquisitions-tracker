@@ -21,7 +21,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install anthropic requests google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client beautifulsoup4 lxml
+        run: pip install requests google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client beautifulsoup4 lxml
 
       - name: Write Drive token
         run: |
@@ -32,7 +32,6 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
-          DRIVE_FILE_ID: ${{ secrets.DRIVE_FILE_ID }}
           SOURCES_JSON_B64: ${{ secrets.SOURCES_JSON_B64 }}
         run: python "[01] Scripts/newsletter_builder.py" --web-only
 
