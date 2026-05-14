@@ -39,7 +39,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "CONTENT_CHANGED=false" >> $GITHUB_ENV
           else
-            git commit -m "Auto-refresh: website update $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git commit -m "Auto-refresh: website update $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip netlify]"
             git push origin master
             echo "CONTENT_CHANGED=true" >> $GITHUB_ENV
           fi
