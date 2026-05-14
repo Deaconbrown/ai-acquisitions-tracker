@@ -27,6 +27,7 @@ import datetime
 import requests
 from pathlib import Path
 from render_email_html import render_email_html
+import argparse
 
 
 # ---------------------------------------------------------------------------
@@ -469,7 +470,7 @@ def get_issue_number():
 # MAIN
 # ---------------------------------------------------------------------------
 
-def main():
+def main(web_only=False):
     print("Senal AI newsletter builder starting...")
 
     week_end   = datetime.datetime.utcnow()
@@ -501,7 +502,7 @@ def main():
     print("Newsletter written.")
 
     # 3. Render HTML
-    issue_number = get_issue_number()
+    issue_number = get_issue_number() if not web_only else 0
     html = render_html(data, issue_number, week_start, week_end)
     email_html = render_email_html(data, issue_number, week_start, week_end)
 
@@ -509,10 +510,11 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     ISSUES_DIR.mkdir(parents=True, exist_ok=True)
 
-    issue_filename = f"issue-{issue_number:03d}.html"
-    issue_path     = ISSUES_DIR / issue_filename
-    issue_path.write_text(html, encoding="utf-8")
-    print(f"Saved: {issue_path}")
+    if not web_only:
+        issue_filename = f"issue-{issue_number:03d}.html"
+        issue_path     = ISSUES_DIR / issue_filename
+        issue_path.write_text(html, encoding="utf-8")
+        print(f"Saved: {issue_path}")
 
     # Also write as latest.html for easy linking
     latest_path = OUTPUT_DIR / "latest.html"
@@ -522,10 +524,14 @@ def main():
     # 5. Send to Buttondown
     subject = f"Señal AI · Issue {issue_number} · {week_start.strftime('%d %b')} to {week_end.strftime('%d %b %Y')}"
     print(f"Sending to Buttondown: {subject}")
-    send_to_buttondown(subject, email_html)
+    if not web_only:
+        send_to_buttondown(subject, email_html)
 
     print("Done. Newsletter pipeline complete.")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--web-only", action="store_true", help="Update website only — skip issue save and Buttondown send")
+    args = parser.parse_args()
+    main(web_only=args.web_only)
