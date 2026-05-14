@@ -39,3 +39,13 @@ jobs:
           git add newsletter/ public/
           git diff --cached --quiet || git commit -m "Auto-publish: newsletter issue $(date -u +%Y-%m-%d)"
           git push origin master
+
+      - name: Trigger Netlify deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: >
+          curl -s -X POST
+          "https://api.netlify.com/api/v1/sites/85ffb101-80cc-482b-a19b-064df6a3dcbb/builds"
+          -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN"
+          -H "Content-Type: application/json"
+          -d "{}"
