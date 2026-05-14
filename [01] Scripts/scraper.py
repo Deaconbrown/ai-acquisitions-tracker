@@ -55,9 +55,10 @@ ALERT_THRESHOLD  = 3
 with open(CONFIG_FILE, "r") as f:
     config = json.load(f)
 
-KEYWORDS     = [k.lower() for k in config["keywords"]]
-AI_COMPANIES = [c.lower() for c in config["ai_companies"]]
-RSS_FEEDS    = config["rss_feeds"]
+KEYWORDS         = [k.lower() for k in config["keywords"]]
+AI_COMPANIES     = [c.lower() for c in config["ai_companies"]]
+RSS_FEEDS        = config["rss_feeds"]
+EXCLUDE_KEYWORDS = [e.lower() for e in config.get("exclude_keywords", [])]
 
 # ── LOGGING ──────────────────────────────────────────────────────────────────
 # Every time the scraper runs it writes a line to the log file
@@ -363,6 +364,8 @@ def already_saved(url, title):
 # an AI company name AND an acquisition keyword
 def is_relevant(text):
     text_lower = text.lower()
+    if EXCLUDE_KEYWORDS and any(e in text_lower for e in EXCLUDE_KEYWORDS):
+        return False
     has_keyword = any(k in text_lower for k in KEYWORDS)
     has_company = any(c in text_lower for c in AI_COMPANIES)
     return has_keyword and has_company
