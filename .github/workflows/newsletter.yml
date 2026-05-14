@@ -1,57 +1,41 @@
-name: Weekly Newsletter
+name: Newsletter
 
 on:
   schedule:
-    # Every Monday at 06:00 UTC — 07:00 UK time (BST, GMT+1)
-    # Note: if UK clocks go back to GMT in winter this becomes 06:00 local.
-    # Update to cron "0 7 * * 1" in winter months if needed.
     - cron: "0 6 * * 1"
   workflow_dispatch:
-    # Allows manual trigger from GitHub Actions tab if needed
 
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
-
     permissions:
-      contents: write   # needed to commit the generated HTML back to the repo
+      contents: write
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4.2.2
         with:
-          fetch-depth: 0   # full history so issue numbering is accurate
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5.6.0
         with:
-          python-version: "3.11"
+          python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install requests google-auth google-auth-oauthlib google-auth-httplib2
-
-      - name: Decode secrets to disk
-        env:
-          PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
-        run: |
-          mkdir -p /tmp/credentials
-          echo "$PERSONAL_DRIVE_TOKEN_B64" | base64 --decode > /tmp/credentials/google_drive_token.pickle
+        run: pip install requests google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client beautifulsoup4 lxml
 
       - name: Run newsletter builder
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
-          GITHUB_ACTIONS: "true"
-        run: |
-          python "[01] Scripts/newsletter_builder.py"
+        run: python "[01] Scripts/newsletter_builder.py"
 
-      - name: Commit and push newsletter HTML
+      - name: Commit and push HTML
         run: |
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add newsletter/
-          git diff --staged --quiet || git commit -m "Auto-publish: newsletter issue $(date +'%Y-%m-%d')"
-          git push
+          git diff --cached --quiet || git commit -m "Auto-publish: newsletter issue $(date -u +%Y-%m-%d)"
+          git push origin master
