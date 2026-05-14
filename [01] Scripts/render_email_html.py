@@ -131,13 +131,13 @@ def render_email_html(data, issue_number, week_start, week_end):
                              line-height:1.75; font-family:Arial,Helvetica,sans-serif;">
                     {lead_body}
                   </p>
-                  <a href="{data['lead_url']}"
+                  <a href="{data['lead_url']}" color="#0d0f0d"
                      style="display:inline-block; background-color:#39ff14;
-                            color:#0d0f0d; font-size:11px; font-weight:700;
+                            color:#0d0f0d !important; font-size:11px; font-weight:700;
                             letter-spacing:0.1em; text-transform:uppercase;
                             padding:8px 16px; text-decoration:none;
                             font-family:Arial,Helvetica,sans-serif;">
-                    Read full story &rarr;
+                    <font color="#0d0f0d">Read full story &rarr;</font>
                   </a>
                 </td>
               </tr>
@@ -260,3 +260,4 @@ def render_email_html(data, issue_number, week_start, week_end):
 
 </body>
 </html>"""
+
