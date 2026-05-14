@@ -201,7 +201,7 @@ Return your response as valid JSON matching this schema exactly:
   "lead_source": "string",
   "lead_author": "string or empty string",
   "lead_url": "string",
-  "lead_body": "string (paragraphs separated by \\n\\n)",
+  "lead_body": "string (one paragraph only, no line breaks)",
   "stories": [
     {{
       "tag": "string",
