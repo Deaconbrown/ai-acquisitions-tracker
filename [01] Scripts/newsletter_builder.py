@@ -28,6 +28,7 @@ import requests
 from pathlib import Path
 from render_email_html import render_email_html
 import argparse
+import html as html_mod
 
 
 # ---------------------------------------------------------------------------
@@ -36,7 +37,8 @@ import argparse
 
 DRIVE_CSV_NAME   = "acquisitions.csv"
 OUTPUT_DIR       = Path("newsletter")          # folder committed to GitHub
-ISSUES_DIR       = OUTPUT_DIR / "issues"
+PUBLIC_DIR       = Path("public")
+ISSUES_DIR       = PUBLIC_DIR / "issues"
 ANTHROPIC_MODEL  = "claude-sonnet-4-6"
 MAX_ARTICLE_CHARS = 3000                       # chars fetched per article
 MIN_STORIES       = 1                          # skip run if fewer stories found
@@ -457,6 +459,164 @@ def send_to_buttondown(subject, html_body):
 
 
 # ---------------------------------------------------------------------------
+# PUBLIC SITE UPDATE — inject latest issue into static HTML
+# ---------------------------------------------------------------------------
+
+def _update_index_html(data, issue_number):
+    """Replace the LATEST ISSUE PREVIEW block in public/index.html."""
+    index_path = PUBLIC_DIR / "index.html"
+    if not index_path.exists():
+        print(f"Warning: {index_path} not found, skipping index update.")
+        return
+
+    content = index_path.read_text(encoding="utf-8")
+    start_marker = "<!-- LATEST ISSUE PREVIEW -->"
+    end_marker   = "<!-- END LATEST ISSUE PREVIEW -->"
+    start_idx = content.find(start_marker)
+    end_idx   = content.find(end_marker)
+    if start_idx == -1 or end_idx == -1:
+        print("Warning: LATEST ISSUE PREVIEW markers not found in index.html, skipping.")
+        return
+
+    cards = ""
+    for s in data.get("stories", [])[:4]:
+        a   = html_mod.escape(s.get("author", ""))
+        src = html_mod.escape(s.get("source", ""))
+        url = s.get("url", "#")
+        byline = f"{a} · " if a else ""
+        cards += (
+            f'      <div class="sn-story-card">\n'
+            f'        <div class="sn-story-tag">{html_mod.escape(s.get("tag",""))}</div>\n'
+            f'        <div class="sn-story-title">{html_mod.escape(s.get("title",""))}</div>\n'
+            f'        <div class="sn-story-byline">{byline}'
+            f'<a href="{url}" target="_blank" rel="noopener">{src} →</a></div>\n'
+            f'        <div class="sn-story-byline">{html_mod.escape(s.get("date",""))}</div>\n'
+            f'      </div>\n'
+        )
+
+    lead_author = data.get("lead_author", "")
+    author_str  = f"Reported by {html_mod.escape(lead_author)} · " if lead_author else ""
+
+    new_section = (
+        f'<!-- LATEST ISSUE PREVIEW -->\n'
+        f'  <div class="sn-section">\n'
+        f'    <div class="sn-section-label">\n'
+        f'      <span>Latest edition, issue {issue_number}</span>\n'
+        f'      <a href="/archive.html">View all issues →</a>\n'
+        f'    </div>\n\n'
+        f'    <div class="sn-lead-card">\n'
+        f'      <div class="sn-issue-tag">Lead story</div>\n'
+        f'      <div class="sn-lead-title">{html_mod.escape(data.get("lead_title",""))}</div>\n'
+        f'      <div class="sn-lead-source">{author_str}'
+        f'<a href="{data.get("lead_url","#")}" target="_blank" rel="noopener">'
+        f'{html_mod.escape(data.get("lead_source",""))} →</a></div>\n'
+        f'      <div class="sn-lead-body">{html_mod.escape(data.get("lead_body",""))}</div>\n'
+        f'      <a class="sn-read-link" href="/issues/issue-{issue_number:03d}.html">Read full edition →</a>\n'
+        f'    </div>\n\n'
+        f'    <div class="sn-story-grid">\n'
+        f'{cards}'
+        f'    </div>\n\n'
+        f'    <div class="sn-watch">\n'
+        f'      <div class="sn-watch-label">What to watch</div>\n'
+        f'      <div class="sn-watch-body">{html_mod.escape(data.get("watch_body",""))}</div>\n'
+        f'    </div>\n'
+        f'  </div>\n'
+        f'  <!-- END LATEST ISSUE PREVIEW -->'
+    )
+
+    new_content = content[:start_idx] + new_section + content[end_idx + len(end_marker):]
+    index_path.write_text(new_content, encoding="utf-8")
+    print(f"Updated: {index_path}")
+
+
+def _update_archive_html(data, issue_number, week_end):
+    """Prepend new issue row and update stats in public/archive.html."""
+    archive_path = PUBLIC_DIR / "archive.html"
+    if not archive_path.exists():
+        print(f"Warning: {archive_path} not found, skipping archive update.")
+        return
+
+    content = archive_path.read_text(encoding="utf-8")
+
+    content = re.sub(
+        r'(<div class="sn-stat-value" id="statIssues">)\d+(</div>)',
+        rf'\g<1>{issue_number}\g<2>',
+        content
+    )
+    m = re.search(r'<div class="sn-stat-value" id="statStories">(\d+)</div>', content)
+    prev_stories = int(m.group(1)) if m else 0
+    new_stories  = prev_stories + 1 + len(data.get("stories", []))
+    content = re.sub(
+        r'(<div class="sn-stat-value" id="statStories">)\d+(</div>)',
+        rf'\g<1>{new_stories}\g<2>',
+        content
+    )
+
+    seen_tags = []
+    for s in data.get("stories", []):
+        t = s.get("tag", "")
+        if t and t not in seen_tags:
+            seen_tags.append(t)
+    seen_tags = seen_tags[:4]
+    tags_attr = ",".join(seen_tags)
+    tag_spans = "".join(
+        f'            <span class="sn-tag">{html_mod.escape(t)}</span>\n'
+        for t in seen_tags
+    )
+
+    lead_body = data.get("lead_body", "")
+    summary   = html_mod.escape(lead_body[:200] + ("..." if len(lead_body) > 200 else ""))
+    date_str  = str(week_end.day) + week_end.strftime(" %b %Y")
+
+    new_row = (
+        f'\n      <div class="sn-issue-row" data-tags="{tags_attr}"\n'
+        f'           onclick="window.location=\'/issues/issue-{issue_number:03d}.html\'">\n'
+        f'        <div class="sn-issue-num">\n'
+        f'          <span>{issue_number}</span>\n'
+        f'          Issue\n'
+        f'        </div>\n'
+        f'        <div class="sn-issue-row-content">\n'
+        f'          <div class="sn-issue-row-date">{date_str}</div>\n'
+        f'          <div class="sn-issue-row-title">{html_mod.escape(data.get("lead_title",""))}</div>\n'
+        f'          <div class="sn-issue-row-summary">{summary}</div>\n'
+        f'          <div class="sn-issue-row-tags">\n'
+        f'{tag_spans}'
+        f'          </div>\n'
+        f'        </div>\n'
+        f'        <div class="sn-issue-row-arrow">→</div>\n'
+        f'      </div>\n'
+    )
+
+    year = week_end.year
+    year_label_tag = f'<div class="sn-year-label">{year}</div>'
+    if year_label_tag in content:
+        content = content.replace(year_label_tag + "\n", year_label_tag + "\n" + new_row, 1)
+    else:
+        first_group = content.find('<div class="sn-year-group"')
+        if first_group == -1:
+            first_group = content.find('<div class="sn-empty"')
+        if first_group == -1:
+            print("Warning: could not find insertion point in archive.html")
+        else:
+            year_block = (
+                f'    <div class="sn-year-group" data-year="{year}">\n'
+                f'      <div class="sn-year-label">{year}</div>\n'
+                f'{new_row}\n'
+                f'    </div>\n\n'
+            )
+            content = content[:first_group] + year_block + content[first_group:]
+
+    archive_path.write_text(content, encoding="utf-8")
+    print(f"Updated: {archive_path}")
+
+
+def update_public_pages(data, issue_number, week_end):
+    """Update public/index.html and public/archive.html with the new issue."""
+    _update_index_html(data, issue_number)
+    _update_archive_html(data, issue_number, week_end)
+
+
+# ---------------------------------------------------------------------------
 # ISSUE NUMBER — derive from how many issues exist already
 # ---------------------------------------------------------------------------
 
@@ -515,6 +675,9 @@ def main(web_only=False):
         issue_path     = ISSUES_DIR / issue_filename
         issue_path.write_text(html, encoding="utf-8")
         print(f"Saved: {issue_path}")
+
+        # Update public site pages with this issue's content
+        update_public_pages(data, issue_number, week_end)
 
     # Also write as latest.html for easy linking
     latest_path = OUTPUT_DIR / "latest.html"
