@@ -185,7 +185,7 @@ Write the complete newsletter following this exact structure:
 1. LEAD_TITLE: The title of the most significant story this week (one line only)
 2. LEAD_SOURCE: Publication name and author name if known, otherwise just publication
 3. LEAD_URL: The URL of the lead story
-4. LEAD_BODY: Two to three paragraphs of original analysis on the lead story. Explain why this deal matters, what it signals about the AI industry, and what the strategic logic is. This is your own commentary, not a summary of the article.
+4. LEAD_BODY: One paragraph of original analysis on the lead story. Maximum 4 sentences. Explain why this deal matters, what it signals about the AI industry, and what the strategic logic is. This is your own commentary, not a summary of the article. Do not write more than one paragraph.
 5. STORIES: For each remaining story provide:
    - STORY_TAG: One word category (Infrastructure, Talent, Data, Hardware, Tooling, Research, or Other)
    - STORY_TITLE: The story title
@@ -227,6 +227,7 @@ Your writing rules:
 - Do not use hyphens to join words unnecessarily.
 - Never claim credit for the original reporting. The analysis is yours. The facts belong to the journalists who reported them.
 - Always name the original publication and author when known.
+- The lead_body field must be one paragraph only. Maximum 4 sentences. Never write more than one paragraph for lead_body. No double line breaks inside lead_body.
 - Return only valid JSON. No preamble, no explanation, no markdown code fences."""
 
 
