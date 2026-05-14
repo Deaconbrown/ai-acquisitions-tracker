@@ -680,7 +680,7 @@ def main(web_only=False):
         update_public_pages(data, issue_number, week_end)
 
     # Also write as latest.html for easy linking
-    latest_path = OUTPUT_DIR / "latest.html"
+    latest_path = PUBLIC_DIR / "latest.html"
     latest_path.write_text(html, encoding="utf-8")
     print(f"Saved: {latest_path}")
 
