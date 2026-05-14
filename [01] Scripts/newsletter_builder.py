@@ -502,7 +502,7 @@ def main(web_only=False):
     print("Newsletter written.")
 
     # 3. Render HTML
-    issue_number = get_issue_number() if not web_only else 0
+    issue_number = get_issue_number()
     html = render_html(data, issue_number, week_start, week_end)
     email_html = render_email_html(data, issue_number, week_start, week_end)
 
