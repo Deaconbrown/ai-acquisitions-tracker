@@ -676,8 +676,11 @@ def main(web_only=False):
         issue_path.write_text(html, encoding="utf-8")
         print(f"Saved: {issue_path}")
 
-        # Update public site pages with this issue's content
-        update_public_pages(data, issue_number, week_end)
+        newsletter_path = PUBLIC_DIR / "newsletter.html"
+        newsletter_path.write_text(html, encoding="utf-8")
+        print(f"Saved: {newsletter_path}")
+
+    update_public_pages(data, issue_number, week_end)
 
     # Also write as latest.html for easy linking
     latest_path = PUBLIC_DIR / "latest.html"
