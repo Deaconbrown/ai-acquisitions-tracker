@@ -512,7 +512,7 @@ def main():
     print(f"Saved: {latest_path}")
 
     # 5. Send to Buttondown
-    subject = f"Senal AI, Issue {issue_number} · {week_start.strftime('%d %b')} to {week_end.strftime('%d %b %Y')}"
+    subject = f"Señal AI · Issue {issue_number} · {week_start.strftime('%d %b')} to {week_end.strftime('%d %b %Y')}"
     print(f"Sending to Buttondown: {subject}")
     send_to_buttondown(subject, email_html)
 
