@@ -168,7 +168,7 @@ Story {i}:
 Title: {story.get('Headline', '')}
 URL: {story.get('Source URL', '')}
 Source: {story.get('Feed', '')}
-Date: {story.get('Date Found', '')}
+Date: {story.get('days_ago', '')}
 Summary: {story.get('Summary', '')}
 Article excerpt: {article_text if article_text else '(not available)'}
 ---"""
@@ -192,7 +192,7 @@ Write the complete newsletter following this exact structure:
    - STORY_AUTHOR: Author name if known
    - STORY_SOURCE: Publication name
    - STORY_URL: The URL
-   - STORY_DATE: How long ago (e.g. 3 days ago, 1 week ago)
+   - STORY_DATE: Use the Date field provided above exactly as given. Do not calculate or rewrite it.
 6. WATCH_BODY: One forward-looking paragraph identifying the pattern across this week's deals and what to watch in the weeks ahead.
 
 Return your response as valid JSON matching this schema exactly:
