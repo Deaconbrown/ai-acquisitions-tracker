@@ -117,6 +117,13 @@ def get_this_weeks_stories(csv_text):
         except ValueError:
             continue
         if pub_date >= cutoff:
+            days_diff = (datetime.datetime.utcnow() - pub_date).days
+            if days_diff == 0:
+                row["days_ago"] = "Today"
+            elif days_diff == 1:
+                row["days_ago"] = "1 day ago"
+            else:
+                row["days_ago"] = f"{days_diff} days ago"
             stories.append(row)
 
     stories.sort(key=lambda r: r.get("Date Found", ""), reverse=True)
