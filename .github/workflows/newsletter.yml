@@ -28,7 +28,7 @@ jobs:
 
       - name: Run newsletter builder
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
         run: python "[01] Scripts/newsletter_builder.py"
