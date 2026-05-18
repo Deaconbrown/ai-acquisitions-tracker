@@ -1,0 +1,28 @@
+name: Test Gemini Key
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Gemini API key
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pip install -q requests
+          python - <<EOF
+import os, requests, sys
+key = os.environ["GEMINI_API_KEY"]
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={key}"
+payload = {"contents": [{"parts": [{"text": "Say hello in one word."}]}]}
+r = requests.post(url, json=payload, timeout=30)
+print(f"HTTP status: {r.status_code}")
+if r.status_code == 200:
+    text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    print(f"Response: {text}")
+    print("GEMINI KEY: VALID")
+else:
+    print(f"Error: {r.text[:300]}")
+    print("GEMINI KEY: FAILED")
+    sys.exit(1)
+EOF
