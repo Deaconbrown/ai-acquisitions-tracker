@@ -27,7 +27,7 @@ jobs:
 
       - name: Run web refresh
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
         run: python "[01] Scripts/newsletter_builder.py" --web-only
 
