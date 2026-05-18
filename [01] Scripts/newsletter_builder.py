@@ -1940,7 +1940,7 @@ def _update_index_html(data, issue_number):
 
 
 
-        f'      <span>Latest edition, issue {issue_number}</span>\n'
+        f'      <span>Latest edition</span>\n'
 
 
 
