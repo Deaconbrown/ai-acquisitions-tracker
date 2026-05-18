@@ -952,7 +952,7 @@ def call_gemini(prompt):
 
     payload = {
 
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
 
         "contents": [{"parts": [{"text": prompt}]}],
 
