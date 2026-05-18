@@ -2,36 +2,14 @@ name: Gemini Diagnostics
 on:
   push:
     paths:
-      - gemini_diag.txt
+      - gemini_diag.py
 jobs:
   diag:
     runs-on: ubuntu-latest
     steps:
-      - name: List available Gemini models
+      - uses: actions/checkout@v4
+      - run: pip install -q requests
+      - name: List Gemini models
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          pip install -q requests
-          python << PYEOF
-import os, requests
-key = os.environ["GEMINI_API_KEY"]
-
-# List available models
-r = requests.get(f"https://generativelanguage.googleapis.com/v1beta/models?key={key}", timeout=10)
-print("ListModels status:", r.status_code)
-if r.status_code == 200:
-    models = r.json().get("models", [])
-    print(f"Available models ({len(models)} total):")
-    for m in models:
-        print(" ", m["name"], "-", m.get("displayName",""))
-else:
-    print("Error:", r.text[:500])
-
-# Also try v1 endpoint with gemini-1.5-flash
-r2 = requests.get(f"https://generativelanguage.googleapis.com/v1/models?key={key}", timeout=10)
-print("v1 ListModels status:", r2.status_code)
-if r2.status_code == 200:
-    models2 = r2.json().get("models", [])
-    names = [m["name"] for m in models2 if "flash" in m["name"].lower() or "pro" in m["name"].lower()]
-    print("Flash/Pro models on v1:", names)
-PYEOF
+        run: python gemini_diag.py
