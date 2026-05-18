@@ -968,9 +968,29 @@ def call_gemini(prompt):
 
     resp.raise_for_status()
 
-    raw = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+    resp_json = resp.json()
 
-    raw = re.sub(r"—|–", "-", raw)
+    candidates = resp_json.get("candidates", [])
+
+    if not candidates:
+
+        print(f"Gemini empty candidates: {json.dumps(resp_json)[:300]}")
+
+        raise ValueError("Gemini returned no candidates")
+
+    raw = candidates[0]["content"]["parts"][0]["text"].strip()
+
+    raw = re.sub(r"^```json\s*", "", raw)
+
+    raw = re.sub(r"\s*```$", "", raw)
+
+    if not raw:
+
+        finish = candidates[0].get("finishReason", "unknown")
+
+        print(f"Gemini empty text. finishReason: {finish}")
+
+        raise ValueError("Gemini returned empty text")
 
     return json.loads(raw)
 
