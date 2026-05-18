@@ -1,4 +1,5 @@
 import os, requests, sys
+# Gemini API key test
 key = os.environ.get('GEMINI_API_KEY', '')
 if not key:
     print('ERROR: GEMINI_API_KEY not set')
