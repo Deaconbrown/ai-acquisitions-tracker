@@ -2,7 +2,15 @@
 
 
 
+
+
+
+
 newsletter_builder.py
+
+
+
+
 
 
 
@@ -10,7 +18,15 @@ Senal AI — Weekly Newsletter Pipeline
 
 
 
+
+
+
+
 --------------------------------------
+
+
+
+
 
 
 
@@ -18,11 +34,23 @@ Reads this week's stories from the acquisitions CSV on Google Drive,
 
 
 
+
+
+
+
 fetches each article for context, sends everything to the Anthropic API
 
 
 
+
+
+
+
 for Claude to write the newsletter, then saves the finished HTML page
+
+
+
+
 
 
 
@@ -34,7 +62,19 @@ ready for Netlify deployment.
 
 
 
+
+
+
+
+
+
+
+
 Environment variables required:
+
+
+
+
 
 
 
@@ -42,7 +82,15 @@ Environment variables required:
 
 
 
+
+
+
+
   PERSONAL_DRIVE_TOKEN_B64   — Base64-encoded Google Drive OAuth token
+
+
+
+
 
 
 
@@ -54,11 +102,27 @@ Environment variables required:
 
 
 
+
+
+
+
+
+
+
+
 Run locally:  python newsletter_builder.py
 
 
 
+
+
+
+
 Run in CI:    triggered by .github/workflows/newsletter.yml every Monday and Friday
+
+
+
+
 
 
 
@@ -70,7 +134,19 @@ Run in CI:    triggered by .github/workflows/newsletter.yml every Monday and Fri
 
 
 
+
+
+
+
+
+
+
+
 import os
+
+
+
+
 
 
 
@@ -78,7 +154,15 @@ import io
 
 
 
+
+
+
+
 import re
+
+
+
+
 
 
 
@@ -86,7 +170,15 @@ import csv
 
 
 
+
+
+
+
 import json
+
+
+
+
 
 
 
@@ -94,7 +186,15 @@ import base64
 
 
 
+
+
+
+
 import pickle
+
+
+
+
 
 
 
@@ -102,7 +202,15 @@ import datetime
 
 
 
+
+
+
+
 import requests
+
+
+
+
 
 
 
@@ -110,11 +218,23 @@ from pathlib import Path
 
 
 
+
+
+
+
 from render_email_html import render_email_html
 
 
 
+
+
+
+
 import argparse
+
+
+
+
 
 
 
@@ -130,7 +250,23 @@ import html as html_mod
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -138,7 +274,19 @@ import html as html_mod
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -150,7 +298,15 @@ DRIVE_CSV_NAME   = "acquisitions.csv"
 
 
 
+
+
+
+
 OUTPUT_DIR       = Path("newsletter")          # folder committed to GitHub
+
+
+
+
 
 
 
@@ -158,7 +314,15 @@ PUBLIC_DIR       = Path("public")
 
 
 
+
+
+
+
 ISSUES_DIR       = PUBLIC_DIR / "issues"
+
+
+
+
 
 
 
@@ -166,11 +330,23 @@ GEMINI_MODEL     = "gemini-2.5-flash-lite"
 
 
 
+
+
+
+
 MAX_ARTICLE_CHARS = 3000                       # chars fetched per article
 
 
 
+
+
+
+
 MIN_STORIES       = 1                          # skip run if fewer stories found
+
+
+
+
 
 
 
@@ -186,7 +362,23 @@ MAX_STORIES       = 10                         # cap passed to Claude per issue
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -194,7 +386,19 @@ MAX_STORIES       = 10                         # cap passed to Claude per issue
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -206,7 +410,15 @@ def is_cloud():
 
 
 
+
+
+
+
     """Returns True when running inside GitHub Actions."""
+
+
+
+
 
 
 
@@ -222,7 +434,23 @@ def is_cloud():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -230,7 +458,19 @@ def is_cloud():
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -242,7 +482,15 @@ def load_drive_token():
 
 
 
+
+
+
+
     """Load the Drive OAuth token from env (cloud) or local pickle (dev)."""
+
+
+
+
 
 
 
@@ -250,7 +498,15 @@ def load_drive_token():
 
 
 
+
+
+
+
         token_b64 = os.environ["PERSONAL_DRIVE_TOKEN_B64"]
+
+
+
+
 
 
 
@@ -258,7 +514,15 @@ def load_drive_token():
 
 
 
+
+
+
+
         return pickle.loads(token_bytes)
+
+
+
+
 
 
 
@@ -266,11 +530,23 @@ def load_drive_token():
 
 
 
+
+
+
+
         token_path = Path.home() / ".claude" / "credentials" / "google_drive_token.pickle"
 
 
 
+
+
+
+
         with open(token_path, "rb") as f:
+
+
+
+
 
 
 
@@ -286,7 +562,23 @@ def load_drive_token():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def get_drive_headers(token):
+
+
+
+
 
 
 
@@ -294,7 +586,15 @@ def get_drive_headers(token):
 
 
 
+
+
+
+
     from google.auth.transport.requests import Request
+
+
+
+
 
 
 
@@ -302,7 +602,15 @@ def get_drive_headers(token):
 
 
 
+
+
+
+
         token.refresh(Request())
+
+
+
+
 
 
 
@@ -318,7 +626,23 @@ def get_drive_headers(token):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def download_csv_from_drive(headers):
+
+
+
+
 
 
 
@@ -326,7 +650,15 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
     search_url = (
+
+
+
+
 
 
 
@@ -334,7 +666,15 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
         f"?q=name='{DRIVE_CSV_NAME}' and trashed=false"
+
+
+
+
 
 
 
@@ -342,7 +682,15 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -350,7 +698,15 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
     resp.raise_for_status()
+
+
+
+
 
 
 
@@ -358,7 +714,15 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
     if not files:
+
+
+
+
 
 
 
@@ -370,7 +734,19 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
+
+
+
+
     file_id = files[0]["id"]
+
+
+
+
 
 
 
@@ -378,11 +754,23 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
     resp = requests.get(download_url, headers=headers)
 
 
 
+
+
+
+
     resp.raise_for_status()
+
+
+
+
 
 
 
@@ -398,7 +786,23 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -406,7 +810,19 @@ def download_csv_from_drive(headers):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -418,7 +834,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -426,7 +850,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
     CSV columns: Date Found, Headline, Summary, Source URL, Feed
+
+
+
+
 
 
 
@@ -434,11 +866,23 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
     reader = csv.DictReader(io.StringIO(csv_text))
 
 
 
+
+
+
+
     cutoff = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - datetime.timedelta(days=7)
+
+
+
+
 
 
 
@@ -450,7 +894,19 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
+
+
+
+
     for row in reader:
+
+
+
+
 
 
 
@@ -458,11 +914,23 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
         if not raw_date:
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -470,7 +938,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
             pub_date = datetime.datetime.fromisoformat(raw_date)
+
+
+
+
 
 
 
@@ -478,7 +954,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
             continue
+
+
+
+
 
 
 
@@ -486,7 +970,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
             days_diff = (datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - pub_date).days
+
+
+
+
 
 
 
@@ -494,7 +986,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
                 row["days_ago"] = "Today"
+
+
+
+
 
 
 
@@ -502,7 +1002,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
                 row["days_ago"] = "1 day ago"
+
+
+
+
 
 
 
@@ -510,7 +1018,15 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
                 row["days_ago"] = f"{days_diff} days ago"
+
+
+
+
 
 
 
@@ -522,7 +1038,19 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
+
+
+
+
     stories.sort(key=lambda r: r.get("Date Found", ""), reverse=True)
+
+
+
+
 
 
 
@@ -538,7 +1066,23 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -546,7 +1090,19 @@ def get_this_weeks_stories(csv_text):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -558,7 +1114,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -566,7 +1130,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
     Returns empty string on any failure — pipeline continues without it.
+
+
+
+
 
 
 
@@ -574,7 +1146,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -582,7 +1162,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
             url,
+
+
+
+
 
 
 
@@ -590,7 +1178,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
             headers={"User-Agent": "SenalAI-NewsletterBot/1.0"}
+
+
+
+
 
 
 
@@ -598,7 +1194,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
         resp.raise_for_status()
+
+
+
+
 
 
 
@@ -606,7 +1210,15 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
         text = re.sub(r"<[^>]+>", " ", resp.text)
+
+
+
+
 
 
 
@@ -614,13 +1226,27 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
         text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text)
+
+
 
         return text[:MAX_ARTICLE_CHARS]
 
 
 
+
+
+
+
     except Exception:
+
+
+
+
 
 
 
@@ -636,7 +1262,23 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -644,7 +1286,19 @@ def fetch_article_text(url):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -656,7 +1310,15 @@ def build_newsletter_prompt(stories, week_start, week_end):
 
 
 
+
+
+
+
     """Build the user prompt containing all stories for this week."""
+
+
+
+
 
 
 
@@ -664,7 +1326,15 @@ def build_newsletter_prompt(stories, week_start, week_end):
 
 
 
+
+
+
+
     for i, story in enumerate(stories, 1):
+
+
+
+
 
 
 
@@ -672,7 +1342,15 @@ def build_newsletter_prompt(stories, week_start, week_end):
 
 
 
+
+
+
+
         stories_block += f"""
+
+
+
+
 
 
 
@@ -680,7 +1358,15 @@ Story {i}:
 
 
 
+
+
+
+
 Title: {story.get('Headline', '')}
+
+
+
+
 
 
 
@@ -688,7 +1374,15 @@ URL: {story.get('Source URL', '')}
 
 
 
+
+
+
+
 Source: {story.get('Feed', '')}
+
+
+
+
 
 
 
@@ -696,7 +1390,15 @@ Date: {story.get('days_ago', '')}
 
 
 
+
+
+
+
 Summary: {story.get('Summary', '')}
+
+
+
+
 
 
 
@@ -704,7 +1406,19 @@ Article excerpt: {article_text if article_text else '(not available)'}
 
 
 
+
+
+
+
 ---"""
+
+
+
+
+
+
+
+
 
 
 
@@ -720,7 +1434,23 @@ Article excerpt: {article_text if article_text else '(not available)'}
 
 
 
+
+
+
+
+
+
+
+
 Week covered: {week_start.strftime('%d %B %Y')} to {week_end.strftime('%d %B %Y')}
+
+
+
+
+
+
+
+
 
 
 
@@ -732,7 +1462,19 @@ Here are this week's stories:
 
 
 
+
+
+
+
 {stories_block}
+
+
+
+
+
+
+
+
 
 
 
@@ -748,7 +1490,19 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
+
+
+
+
 1. LEAD_TITLE: The title of the most significant story this week (one line only)
+
+
+
+
 
 
 
@@ -756,7 +1510,15 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
 3. LEAD_URL: The URL of the lead story
+
+
+
+
 
 
 
@@ -764,7 +1526,15 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
 5. STORIES: For each remaining story provide:
+
+
+
+
 
 
 
@@ -772,7 +1542,15 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
    - STORY_TITLE: The story title
+
+
+
+
 
 
 
@@ -780,7 +1558,15 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
    - STORY_SOURCE: Publication name
+
+
+
+
 
 
 
@@ -788,7 +1574,15 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
    - STORY_DATE: Use the Date field provided above exactly as given. Do not calculate or rewrite it.
+
+
+
+
 
 
 
@@ -800,7 +1594,19 @@ Write the complete newsletter following this exact structure:
 
 
 
+
+
+
+
+
+
+
+
 Return your response as valid JSON matching this schema exactly:
+
+
+
+
 
 
 
@@ -808,7 +1614,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
   "lead_title": "string",
+
+
+
+
 
 
 
@@ -816,7 +1630,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
   "lead_author": "string or empty string",
+
+
+
+
 
 
 
@@ -824,7 +1646,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
   "lead_body": "string (one paragraph only, no line breaks)",
+
+
+
+
 
 
 
@@ -832,7 +1662,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
     {{
+
+
+
+
 
 
 
@@ -840,7 +1678,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
       "title": "string",
+
+
+
+
 
 
 
@@ -848,7 +1694,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
       "source": "string",
+
+
+
+
 
 
 
@@ -856,7 +1710,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
       "date": "string"
+
+
+
+
 
 
 
@@ -864,7 +1726,15 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
   ],
+
+
+
+
 
 
 
@@ -872,7 +1742,23 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
+
+
+
+
 }}"""
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -892,7 +1778,19 @@ SYSTEM_PROMPT = """You are the editor of Senal AI, a twice-weekly newsletter cov
 
 
 
+
+
+
+
+
+
+
+
 Your writing rules:
+
+
+
+
 
 
 
@@ -900,7 +1798,15 @@ Your writing rules:
 
 
 
+
+
+
+
 - Every sentence must add information or insight. No filler, no padding.
+
+
+
+
 
 
 
@@ -908,7 +1814,15 @@ Your writing rules:
 
 
 
+
+
+
+
 - Never use em dashes (the long dash like this: —) anywhere in your output. Use commas or full stops instead.
+
+
+
+
 
 
 
@@ -916,7 +1830,15 @@ Your writing rules:
 
 
 
+
+
+
+
 - Do not use hyphens to join words unnecessarily.
+
+
+
+
 
 
 
@@ -924,11 +1846,23 @@ Your writing rules:
 
 
 
+
+
+
+
 - Always name the original publication and author when known.
 
 
 
+
+
+
+
 - The lead_body field must be one paragraph only. Maximum 4 sentences. Never write more than one paragraph for lead_body. No double line breaks inside lead_body.
+
+
+
+
 
 
 
@@ -944,29 +1878,65 @@ Your writing rules:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def call_gemini(prompt):
+
+
 
     api_key = os.environ.get("GEMINI_API_KEY", "")
 
+
+
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={api_key}"
+
+
 
     payload = {
 
+
+
         "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+
+
 
         "contents": [{"parts": [{"text": prompt}]}],
 
+
+
         "generationConfig": {"maxOutputTokens": 4000}
+
+
 
     }
 
+
+
     resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=120)
+
+
 
     if not resp.ok:
 
+
+
         print(f"Gemini error {resp.status_code}: {resp.text[:500]}")
 
+
+
     resp.raise_for_status()
+
+
 
     resp_json = resp.json()
 
@@ -1004,11 +1974,30 @@ def call_gemini(prompt):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 def strip_dashes(obj):
 
 
 
+
+
+
+
     """
+
+
+
+
 
 
 
@@ -1016,7 +2005,15 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
     Fallback safety net — the system prompt should prevent them appearing.
+
+
+
+
 
 
 
@@ -1024,7 +2021,15 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
     if isinstance(obj, str):
+
+
+
+
 
 
 
@@ -1032,7 +2037,15 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
         obj = obj.replace("\u2013", " to ") # en dash to "to"
+
+
+
+
 
 
 
@@ -1040,7 +2053,15 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
     if isinstance(obj, dict):
+
+
+
+
 
 
 
@@ -1048,11 +2069,23 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
     if isinstance(obj, list):
 
 
 
+
+
+
+
         return [strip_dashes(i) for i in obj]
+
+
+
+
 
 
 
@@ -1068,7 +2101,23 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1076,7 +2125,19 @@ def strip_dashes(obj):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -1088,7 +2149,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     """Render the newsletter data into a full HTML page."""
+
+
+
+
+
+
+
+
 
 
 
@@ -1100,7 +2173,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     for story in data.get("stories", []):
+
+
+
+
 
 
 
@@ -1108,7 +2189,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
         stories_html += f"""
+
+
+
+
 
 
 
@@ -1116,7 +2205,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
           <div class="sn-story-tag">{story['tag']}</div>
+
+
+
+
 
 
 
@@ -1124,11 +2221,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
           <div class="sn-story-byline">{author_line}<a href="{story['url']}" target="_blank" rel="noopener">{story['source']} →</a></div>
 
 
 
+
+
+
+
           <div class="sn-story-byline">{story['date']}</div>
+
+
+
+
 
 
 
@@ -1140,7 +2249,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     lead_author_line = f"{data['lead_author']} · " if data.get("lead_author") else ""
+
+
+
+
 
 
 
@@ -1148,7 +2269,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
         f"<p>{para.strip()}</p>"
+
+
+
+
 
 
 
@@ -1156,11 +2285,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
         if para.strip()
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
 
 
 
@@ -1176,7 +2321,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     return f"""<!DOCTYPE html>
+
+
+
+
 
 
 
@@ -1184,7 +2341,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
 <head>
+
+
+
+
 
 
 
@@ -1192,7 +2357,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
 
 
 
@@ -1200,7 +2373,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <meta name="description" content="Weekly AI acquisition intelligence. Issue {issue_number}, {date_range}.">
+
+
+
+
 
 
 
@@ -1208,7 +2389,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+
+
+
 
 
 
@@ -1220,7 +2409,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-nav {{ display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid #39ff1422; background: #0d0f0ddd; }}
+
+
+
+
 
 
 
@@ -1228,7 +2429,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-logo span {{ color: #e8e8e8; font-weight: 400; }}
+
+
+
+
 
 
 
@@ -1236,11 +2445,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-nav-links a {{ color: #666; text-decoration: none; }}
 
 
 
+
+
+
+
     .sn-nav-links a:hover {{ color: #39ff14; }}
+
+
+
+
 
 
 
@@ -1252,11 +2473,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-issue-header {{ max-width: 860px; margin: 0 auto; padding: 40px 40px 0; }}
 
 
 
+
+
+
+
     .sn-issue-meta {{ font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 10px; }}
+
+
+
+
 
 
 
@@ -1268,7 +2505,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-section {{ padding: 32px 40px; max-width: 860px; margin: 0 auto; }}
+
+
+
+
 
 
 
@@ -1280,7 +2529,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-lead-card {{ background: #0f110f; border: 1px solid #39ff141a; border-left: 3px solid #39ff14; padding: 26px 30px; margin-bottom: 14px; border-radius: 2px; }}
+
+
+
+
 
 
 
@@ -1288,7 +2549,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-lead-title {{ font-size: 20px; font-weight: 600; color: #efefef; line-height: 1.35; margin-bottom: 6px; }}
+
+
+
+
 
 
 
@@ -1296,7 +2565,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-lead-source a {{ color: #39ff1488; text-decoration: none; }}
+
+
+
+
 
 
 
@@ -1304,11 +2581,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-lead-body p {{ font-size: 14px; color: #777; line-height: 1.8; margin-bottom: 14px; }}
 
 
 
+
+
+
+
     .sn-lead-body p:last-child {{ margin-bottom: 18px; }}
+
+
+
+
 
 
 
@@ -1320,7 +2609,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-story-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }}
+
+
+
+
 
 
 
@@ -1328,7 +2629,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-story-card {{ background: #0f110f; border: 1px solid #1a1e1a; padding: 16px 18px; border-radius: 2px; }}
+
+
+
+
 
 
 
@@ -1336,7 +2645,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-story-title {{ font-size: 13px; font-weight: 500; color: #bbb; line-height: 1.45; margin-bottom: 5px; }}
+
+
+
+
 
 
 
@@ -1344,7 +2661,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-story-byline a {{ color: #39ff1455; text-decoration: none; }}
+
+
+
+
 
 
 
@@ -1356,11 +2681,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-watch {{ background: #0f110f; border: 1px solid #1a1e1a; border-top: 1px solid #39ff1430; padding: 22px 28px; border-radius: 2px; margin-top: 14px; }}
 
 
 
+
+
+
+
     .sn-watch-label {{ font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }}
+
+
+
+
 
 
 
@@ -1372,7 +2713,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-kofi-strip {{ max-width: 860px; margin: 0 auto; padding: 0 40px 24px; }}
+
+
+
+
 
 
 
@@ -1380,7 +2733,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     .sn-kofi-text {{ font-size: 13px; color: #555; }}
+
+
+
+
 
 
 
@@ -1392,7 +2753,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
     .sn-disclaimer {{ max-width: 860px; margin: 0 auto; padding: 20px 40px 24px; font-size: 11px; color: #2e2e2e; line-height: 1.8; border-top: 1px solid #111; }}
+
+
+
+
 
 
 
@@ -1400,11 +2773,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   </style>
 
 
 
+
+
+
+
 </head>
+
+
+
+
 
 
 
@@ -1416,7 +2801,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
 <nav class="sn-nav">
+
+
+
+
 
 
 
@@ -1424,7 +2821,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div class="sn-nav-links">
+
+
+
+
 
 
 
@@ -1432,7 +2837,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     <a href="/about">About</a>
+
+
+
+
 
 
 
@@ -1440,7 +2853,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <a class="sn-subscribe-btn" href="/#subscribe">Subscribe free</a>
+
+
+
+
 
 
 
@@ -1452,7 +2873,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
 <div class="sn-issue-header">
+
+
+
+
 
 
 
@@ -1460,7 +2893,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div class="sn-issue-title">AI acquisition intelligence, every Monday and Friday</div>
+
+
+
+
 
 
 
@@ -1472,7 +2913,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
 <div class="sn-section">
+
+
+
+
 
 
 
@@ -1480,7 +2933,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div class="sn-lead-card">
+
+
+
+
 
 
 
@@ -1488,7 +2949,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     <div class="sn-lead-title">{data['lead_title']}</div>
+
+
+
+
 
 
 
@@ -1496,7 +2965,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     <div class="sn-lead-body">{lead_body_html}</div>
+
+
+
+
 
 
 
@@ -1504,11 +2981,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   </div>
 
 
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1520,7 +3013,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div class="sn-section-label">The week's deals</div>
+
+
+
+
 
 
 
@@ -1528,11 +3029,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     {stories_html}
 
 
 
+
+
+
+
   </div>
+
+
+
+
 
 
 
@@ -1540,7 +3053,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     <div class="sn-watch-label">What to watch</div>
+
+
+
+
 
 
 
@@ -1548,11 +3069,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   </div>
 
 
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1564,7 +3101,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div class="sn-kofi-inner">
+
+
+
+
 
 
 
@@ -1572,7 +3117,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
     <a class="sn-kofi-btn" href="https://ko-fi.com/senaiai" target="_blank" rel="noopener">Support on Ko-fi</a>
+
+
+
+
 
 
 
@@ -1580,7 +3133,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1592,11 +3157,27 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   Senal AI provides original analysis and commentary on news reported elsewhere. All source articles remain the property of their respective publishers and authors. Senal AI does not claim credit for any original reporting. Stories are linked directly to their source. This newsletter is independently produced and is not affiliated with any of the companies or publications mentioned.
 
 
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1608,7 +3189,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <div>© 2026 Senal AI</div>
+
+
+
+
 
 
 
@@ -1616,7 +3205,15 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
   <a href="https://buttondown.com/senaiai/unsubscribe" style="color: #2e2e2e; text-decoration: none;">Unsubscribe</a>
+
+
+
+
 
 
 
@@ -1628,7 +3225,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
 </body>
+
+
+
+
 
 
 
@@ -1644,7 +3253,23 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1652,7 +3277,19 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -1664,7 +3301,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
     """Publish the newsletter to Buttondown subscribers."""
+
+
+
+
 
 
 
@@ -1672,11 +3317,23 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
     if not api_key:
 
 
 
+
+
+
+
         print("BUTTONDOWN_API_KEY not set — skipping email delivery.")
+
+
+
+
 
 
 
@@ -1688,7 +3345,19 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
+
+
+
+
     resp = requests.post(
+
+
+
+
 
 
 
@@ -1696,7 +3365,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
         headers={
+
+
+
+
 
 
 
@@ -1704,7 +3381,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
             "Content-Type": "application/json",
+
+
+
+
 
 
 
@@ -1712,7 +3397,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
         },
+
+
+
+
 
 
 
@@ -1720,7 +3413,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
             "subject": subject,
+
+
+
+
 
 
 
@@ -1728,7 +3429,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
             "status": "about_to_send"
+
+
+
+
 
 
 
@@ -1736,7 +3445,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
         timeout=30
+
+
+
+
 
 
 
@@ -1744,7 +3461,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
     if resp.status_code in (200, 201):
+
+
+
+
 
 
 
@@ -1752,7 +3477,15 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
     else:
+
+
+
+
 
 
 
@@ -1768,7 +3501,23 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1776,7 +3525,19 @@ def send_to_buttondown(subject, html_body):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -1788,7 +3549,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
     """Replace the LATEST ISSUE PREVIEW block in public/index.html."""
+
+
+
+
 
 
 
@@ -1796,7 +3565,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
     if not index_path.exists():
+
+
+
+
 
 
 
@@ -1804,7 +3581,19 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         return
+
+
+
+
+
+
+
+
 
 
 
@@ -1816,7 +3605,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
     start_marker = "<!-- LATEST ISSUE PREVIEW -->"
+
+
+
+
 
 
 
@@ -1824,7 +3621,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
     start_idx = content.find(start_marker)
+
+
+
+
 
 
 
@@ -1832,11 +3637,23 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
     if start_idx == -1 or end_idx == -1:
 
 
 
+
+
+
+
         print("Warning: LATEST ISSUE PREVIEW markers not found in index.html, skipping.")
+
+
+
+
 
 
 
@@ -1848,7 +3665,19 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
+
+
+
+
     cards = ""
+
+
+
+
 
 
 
@@ -1856,7 +3685,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         a   = html_mod.escape(s.get("author", ""))
+
+
+
+
 
 
 
@@ -1864,7 +3701,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         url = s.get("url", "#")
+
+
+
+
 
 
 
@@ -1872,7 +3717,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         cards += (
+
+
+
+
 
 
 
@@ -1880,7 +3733,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
             f'        <div class="sn-story-tag">{html_mod.escape(s.get("tag",""))}</div>\n'
+
+
+
+
 
 
 
@@ -1888,7 +3749,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
             f'        <div class="sn-story-byline">{byline}'
+
+
+
+
 
 
 
@@ -1896,11 +3765,23 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
             f'        <div class="sn-story-byline">{html_mod.escape(s.get("date",""))}</div>\n'
 
 
 
+
+
+
+
             f'      </div>\n'
+
+
+
+
 
 
 
@@ -1912,7 +3793,19 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
+
+
+
+
     lead_author = data.get("lead_author", "")
+
+
+
+
 
 
 
@@ -1924,7 +3817,19 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
+
+
+
+
     new_section = (
+
+
+
+
 
 
 
@@ -1932,7 +3837,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'  <div class="sn-section">\n'
+
+
+
+
 
 
 
@@ -1940,7 +3853,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'      <span>Latest edition</span>\n'
+
+
+
+
 
 
 
@@ -1948,7 +3869,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'    </div>\n\n'
+
+
+
+
 
 
 
@@ -1956,7 +3885,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'      <div class="sn-issue-tag">Lead story</div>\n'
+
+
+
+
 
 
 
@@ -1964,7 +3901,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'      <div class="sn-lead-source">{author_str}'
+
+
+
+
 
 
 
@@ -1972,7 +3917,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'{html_mod.escape(data.get("lead_source",""))} →</a></div>\n'
+
+
+
+
 
 
 
@@ -1980,11 +3933,23 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'      <a class="sn-read-link" href="/issues/issue-{issue_number:03d}.html">Read full edition →</a>\n'
 
 
 
+
+
+
+
         f'    </div>\n\n'
+
+
+
+
 
 
 
@@ -1992,7 +3957,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'{cards}'
+
+
+
+
 
 
 
@@ -2000,7 +3973,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'    <div class="sn-watch">\n'
+
+
+
+
 
 
 
@@ -2008,7 +3989,15 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'      <div class="sn-watch-body">{html_mod.escape(data.get("watch_body",""))}</div>\n'
+
+
+
+
 
 
 
@@ -2016,11 +4005,23 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
         f'  </div>\n'
 
 
 
+
+
+
+
         f'  <!-- END LATEST ISSUE PREVIEW -->'
+
+
+
+
 
 
 
@@ -2032,11 +4033,27 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
+
+
+
+
     new_content = content[:start_idx] + new_section + content[end_idx + len(end_marker):]
 
 
 
+
+
+
+
     index_path.write_text(new_content, encoding="utf-8")
+
+
+
+
 
 
 
@@ -2052,7 +4069,23 @@ def _update_index_html(data, issue_number):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def _update_archive_html(data, issue_number, week_end):
+
+
+
+
 
 
 
@@ -2060,7 +4093,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     archive_path = PUBLIC_DIR / "archive.html"
+
+
+
+
 
 
 
@@ -2068,11 +4109,27 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         print(f"Warning: {archive_path} not found, skipping archive update.")
 
 
 
+
+
+
+
         return
+
+
+
+
+
+
+
+
 
 
 
@@ -2088,7 +4145,19 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
+
+
+
+
     content = re.sub(
+
+
+
+
 
 
 
@@ -2096,7 +4165,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         rf'\g<1>{issue_number}\g<2>',
+
+
+
+
 
 
 
@@ -2104,7 +4181,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     )
+
+
+
+
 
 
 
@@ -2112,7 +4197,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     prev_stories = int(m.group(1)) if m else 0
+
+
+
+
 
 
 
@@ -2120,7 +4213,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     content = re.sub(
+
+
+
+
 
 
 
@@ -2128,7 +4229,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         rf'\g<1>{new_stories}\g<2>',
+
+
+
+
 
 
 
@@ -2136,7 +4245,19 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
 
 
 
@@ -2148,7 +4269,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     for s in data.get("stories", []):
+
+
+
+
 
 
 
@@ -2156,7 +4285,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         if t and t not in seen_tags:
+
+
+
+
 
 
 
@@ -2164,7 +4301,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     seen_tags = seen_tags[:4]
+
+
+
+
 
 
 
@@ -2172,7 +4317,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     tag_spans = "".join(
+
+
+
+
 
 
 
@@ -2180,11 +4333,27 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         for t in seen_tags
 
 
 
+
+
+
+
     )
+
+
+
+
+
+
+
+
 
 
 
@@ -2196,7 +4365,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     summary   = html_mod.escape(lead_body[:200] + ("..." if len(lead_body) > 200 else ""))
+
+
+
+
 
 
 
@@ -2208,7 +4385,19 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
+
+
+
+
     new_row = (
+
+
+
+
 
 
 
@@ -2216,7 +4405,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'           onclick="window.location=\'/issues/issue-{issue_number:03d}.html\'">\n'
+
+
+
+
 
 
 
@@ -2224,7 +4421,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'          <span>{issue_number}</span>\n'
+
+
+
+
 
 
 
@@ -2232,7 +4437,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'        </div>\n'
+
+
+
+
 
 
 
@@ -2240,7 +4453,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'          <div class="sn-issue-row-date">{date_str}</div>\n'
+
+
+
+
 
 
 
@@ -2248,7 +4469,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'          <div class="sn-issue-row-summary">{summary}</div>\n'
+
+
+
+
 
 
 
@@ -2256,7 +4485,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'{tag_spans}'
+
+
+
+
 
 
 
@@ -2264,7 +4501,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'        </div>\n'
+
+
+
+
 
 
 
@@ -2272,7 +4517,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         f'      </div>\n'
+
+
+
+
 
 
 
@@ -2284,7 +4537,19 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
+
+
+
+
     year = week_end.year
+
+
+
+
 
 
 
@@ -2292,7 +4557,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     if year_label_tag in content:
+
+
+
+
 
 
 
@@ -2300,7 +4573,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
     else:
+
+
+
+
 
 
 
@@ -2308,7 +4589,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         if first_group == -1:
+
+
+
+
 
 
 
@@ -2316,7 +4605,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         if first_group == -1:
+
+
+
+
 
 
 
@@ -2324,7 +4621,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
         else:
+
+
+
+
 
 
 
@@ -2332,7 +4637,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
                 f'    <div class="sn-year-group" data-year="{year}">\n'
+
+
+
+
 
 
 
@@ -2340,7 +4653,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
                 f'{new_row}\n'
+
+
+
+
 
 
 
@@ -2348,7 +4669,15 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
             )
+
+
+
+
 
 
 
@@ -2360,7 +4689,19 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
+
+
+
+
     archive_path.write_text(content, encoding="utf-8")
+
+
+
+
 
 
 
@@ -2376,7 +4717,23 @@ def _update_archive_html(data, issue_number, week_end):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def update_public_pages(data, issue_number, week_end, update_archive=True):
+
+
+
+
 
 
 
@@ -2384,11 +4741,23 @@ def update_public_pages(data, issue_number, week_end, update_archive=True):
 
 
 
+
+
+
+
     _update_index_html(data, issue_number)
 
 
 
+
+
+
+
     if update_archive:
+
+
+
+
 
 
 
@@ -2404,7 +4773,23 @@ def update_public_pages(data, issue_number, week_end, update_archive=True):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2412,7 +4797,19 @@ def update_public_pages(data, issue_number, week_end, update_archive=True):
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -2424,11 +4821,23 @@ def get_issue_number():
 
 
 
+
+
+
+
     ISSUES_DIR.mkdir(parents=True, exist_ok=True)
 
 
 
+
+
+
+
     existing = list(ISSUES_DIR.glob("issue-*.html"))
+
+
+
+
 
 
 
@@ -2444,7 +4853,23 @@ def get_issue_number():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2452,7 +4877,19 @@ def get_issue_number():
 
 
 
+
+
+
+
 # ---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
@@ -2464,7 +4901,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
     print("Senal AI newsletter builder starting...")
+
+
+
+
+
+
+
+
 
 
 
@@ -2476,7 +4925,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
     week_start = week_end - datetime.timedelta(days=7)
+
+
+
+
+
+
+
+
 
 
 
@@ -2488,11 +4949,23 @@ def main(web_only=False):
 
 
 
+
+
+
+
     print("Loading Drive token...")
 
 
 
+
+
+
+
     token   = load_drive_token()
+
+
+
+
 
 
 
@@ -2504,7 +4977,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     print("Downloading acquisitions CSV from Drive...")
+
+
+
+
 
 
 
@@ -2516,11 +5001,27 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     print("Selecting this week's stories...")
 
 
 
+
+
+
+
     stories = get_this_weeks_stories(csv_text)
+
+
+
+
 
 
 
@@ -2532,11 +5033,27 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     if len(stories) < MIN_STORIES:
 
 
 
+
+
+
+
         print(f"Fewer than {MIN_STORIES} stories found. Skipping this week.")
+
+
+
+
 
 
 
@@ -2548,7 +5065,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     stories = stories[:MAX_STORIES]
+
+
+
+
 
 
 
@@ -2560,7 +5089,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     # 2. Call Anthropic API
+
+
+
+
 
 
 
@@ -2568,11 +5109,23 @@ def main(web_only=False):
 
 
 
+
+
+
+
     prompt = build_newsletter_prompt(stories, week_start, week_end)
 
 
 
+
+
+
+
     data   = call_gemini(prompt)
+
+
+
+
 
 
 
@@ -2584,7 +5137,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     # 3. Render HTML
+
+
+
+
 
 
 
@@ -2592,7 +5157,15 @@ def main(web_only=False):
 
 
 
+
+
+
+
     html = render_html(data, issue_number, week_start, week_end)
+
+
+
+
 
 
 
@@ -2604,11 +5177,27 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     # 4. Save HTML file
 
 
 
+
+
+
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+
+
 
 
 
@@ -2620,7 +5209,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     if not web_only:
+
+
+
+
 
 
 
@@ -2628,11 +5229,23 @@ def main(web_only=False):
 
 
 
+
+
+
+
         issue_path     = ISSUES_DIR / issue_filename
 
 
 
+
+
+
+
         issue_path.write_text(html, encoding="utf-8")
+
+
+
+
 
 
 
@@ -2644,7 +5257,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
         newsletter_path = PUBLIC_DIR / "newsletter.html"
+
+
+
+
 
 
 
@@ -2652,7 +5277,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
         print(f"Saved: {newsletter_path}")
+
+
+
+
+
+
+
+
 
 
 
@@ -2668,7 +5305,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     # Also write as latest.html for easy linking
+
+
+
+
 
 
 
@@ -2676,7 +5325,15 @@ def main(web_only=False):
 
 
 
+
+
+
+
     latest_path.write_text(html, encoding="utf-8")
+
+
+
+
 
 
 
@@ -2688,7 +5345,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
     # 5. Send to Buttondown
+
+
+
+
 
 
 
@@ -2696,7 +5365,15 @@ def main(web_only=False):
 
 
 
+
+
+
+
     if not web_only:
+
+
+
+
 
 
 
@@ -2704,7 +5381,19 @@ def main(web_only=False):
 
 
 
+
+
+
+
         send_to_buttondown(subject, email_html)
+
+
+
+
+
+
+
+
 
 
 
@@ -2724,7 +5413,23 @@ def main(web_only=False):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
+
+
+
+
 
 
 
@@ -2732,7 +5437,15 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
     parser.add_argument("--web-only", action="store_true", help="Update website only — skip issue save and Buttondown send")
+
+
+
+
 
 
 
@@ -2740,7 +5453,15 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
     main(web_only=args.web_only)
+
+
+
+
 
 
 
