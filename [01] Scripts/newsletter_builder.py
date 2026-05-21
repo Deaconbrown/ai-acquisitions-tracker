@@ -58,7 +58,7 @@ Run locally:  python newsletter_builder.py
 
 
 
-Run in CI:    triggered by .github/workflows/newsletter.yml every Sunday
+Run in CI:    triggered by .github/workflows/newsletter.yml every Monday and Friday
 
 
 
@@ -712,7 +712,7 @@ Article excerpt: {article_text if article_text else '(not available)'}
 
 
 
-    return f"""You are writing issue {week_start.strftime('%Y-%W')} of Senal AI, a weekly newsletter covering AI company acquisitions.
+    return f"""You are writing issue {week_start.strftime('%Y-%W')} of Senal AI, a twice-weekly newsletter covering AI company acquisitions.
 
 
 
@@ -884,7 +884,7 @@ Return your response as valid JSON matching this schema exactly:
 
 
 
-SYSTEM_PROMPT = """You are the editor of Senal AI, a weekly newsletter covering AI company acquisitions.
+SYSTEM_PROMPT = """You are the editor of Senal AI, a twice-weekly newsletter covering AI company acquisitions.
 
 
 
@@ -1460,7 +1460,7 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
-  <div class="sn-issue-title">AI acquisition intelligence, every Sunday</div>
+  <div class="sn-issue-title">AI acquisition intelligence, every Monday and Friday</div>
 
 
 
