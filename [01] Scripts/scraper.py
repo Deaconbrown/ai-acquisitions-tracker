@@ -44,8 +44,8 @@ DRIVE_FILE_NAME = "acquisitions.csv"
 
 # Gmail notification settings
 GMAIL_TOKEN_PATH = os.environ.get("GMAIL_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\gmail_send_token.pickle")
-ALERT_FROM       = "arranwilliams@gmail.com"
-ALERT_TO         = "arranwilliams@gmail.com"
+ALERT_FROM       = os.environ.get("ALERT_FROM", "")
+ALERT_TO         = os.environ.get("ALERT_TO", "")
 # Email mode threshold — 0 stories: no email. 1: individual alert. 2–3: mini-digest. 4+: full digest.
 ALERT_THRESHOLD  = 3
 
@@ -293,7 +293,7 @@ def send_gmail_alert(subject, body, summary_text="", date_found="", feed_url="",
         <tr>
           <td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 8px 8px;">
             <p style="margin:0;font-size:11px;color:#666688;text-align:center;">
-              AI Acquisitions Tracker · Automated alert · arranwilliams@gmail.com
+              AI Acquisitions Tracker · Automated alert · hello@senalai.com
             </p>
           </td>
         </tr>
@@ -534,7 +534,7 @@ def scrape_feeds():
         </tr>
         <tr>
           <td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 8px 8px;">
-            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">AI Acquisitions Tracker · Automated alert · arranwilliams@gmail.com</p>
+            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">AI Acquisitions Tracker · Automated alert · hello@senalai.com</p>
           </td>
         </tr>
       </table>
@@ -586,7 +586,7 @@ def scrape_feeds():
         </tr>
         <tr>
           <td style="background-color:#1a1a2e;padding:20px 32px;border-radius:0 0 8px 8px;">
-            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">AI Acquisitions Tracker · Digest alert · arranwilliams@gmail.com</p>
+            <p style="margin:0;font-size:11px;color:#666688;text-align:center;">AI Acquisitions Tracker · Digest alert · hello@senalai.com</p>
           </td>
         </tr>
       </table>
