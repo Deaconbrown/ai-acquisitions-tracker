@@ -13,11 +13,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pickle
 import io
-import base64
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from googleapiclient.discovery import build
-from googleapiclient.discovery import build as gmail_build
 from googleapiclient.http import MediaIoBaseUpload
 from google.auth.transport.requests import Request
 
@@ -42,10 +38,10 @@ DRIVE_TOKEN_PATH = os.environ.get("DRIVE_TOKEN_PATH", r"C:\Users\Arran\.claude\c
 DRIVE_FOLDER_NAME = "AI Acquisitions Tracker"
 DRIVE_FILE_NAME = "acquisitions.csv"
 
-# Gmail notification settings
-GMAIL_TOKEN_PATH = os.environ.get("GMAIL_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\gmail_send_token.pickle")
-ALERT_FROM       = os.environ.get("ALERT_FROM", "")
-ALERT_TO         = os.environ.get("ALERT_TO", "")
+# Resend email notification settings
+RESEND_API_KEY   = os.environ.get("RESEND_API_KEY", "")
+ALERT_FROM       = os.environ.get("ALERT_FROM", "hello@senalai.com")
+ALERT_TO         = os.environ.get("ALERT_TO", "arranwilliams@gmail.com")
 # Email mode threshold — 0 stories: no email. 1: individual alert. 2–3: mini-digest. 4+: full digest.
 ALERT_THRESHOLD  = 3
 
@@ -188,27 +184,8 @@ def upload_report_to_drive():
             log(f"  [DRIVE UPLOAD ERROR] {drive_name}: {e}")
 
 def send_gmail_alert(subject, body, summary_text="", date_found="", feed_url="", link_text="", html_override=None):
-    # Sends an email alert via Gmail API when a new acquisition is found
+    # Sends an email alert via Resend API when a new acquisition is found
     try:
-        with open(GMAIL_TOKEN_PATH, "rb") as f:
-            creds = pickle.load(f)
-
-        if creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            with open(GMAIL_TOKEN_PATH, "wb") as f:
-                pickle.dump(creds, f)
-
-        service = gmail_build("gmail", "v1", credentials=creds, cache_discovery=False)
-
-        message = MIMEMultipart("alternative")
-        message["to"]      = ALERT_TO
-        message["from"]    = ALERT_FROM
-        message["subject"] = subject
-
-        # Plain text fallback
-        plain_part = MIMEText(body, "plain")
-
-        # HTML version — XDA newsletter inspired style
         html_body = f"""
 <!DOCTYPE html>
 <html>
@@ -305,16 +282,24 @@ def send_gmail_alert(subject, body, summary_text="", date_found="", feed_url="",
 </body>
 </html>
 """
-        html_part = MIMEText(html_override if html_override else html_body, "html")
-        message.attach(plain_part)
-        message.attach(html_part)
-
-        raw = base64.urlsafe_b64encode(message.as_string().encode("utf-8")).decode()
-        service.users().messages().send(userId="me", body={"raw": raw}).execute()
+        payload = {
+            "from": ALERT_FROM,
+            "to": [ALERT_TO],
+            "subject": subject,
+            "html": html_override if html_override else html_body,
+            "text": body,
+        }
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
+            json=payload,
+            timeout=15,
+        )
+        response.raise_for_status()
         log(f"Alert email sent: {subject}")
 
     except Exception as e:
-        log(f"ERROR sending Gmail alert: {e}")
+        log(f"ERROR sending alert: {e}")
 
 # ── CSV SETUP ────────────────────────────────────────────────────────────────
 # Creates the CSV file with headers if it doesn't already exist
