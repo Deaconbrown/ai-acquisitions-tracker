@@ -1914,7 +1914,7 @@ def call_gemini(prompt):
 
 
 
-        "generationConfig": {"maxOutputTokens": 8000}
+        "generationConfig": {"maxOutputTokens": 16000}
 
 
 
@@ -3313,7 +3313,7 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
-def send_to_buttondown(subject, html_body):
+def send_to_buttondown(subject, html_body, test_email=None):
 
 
 
@@ -3425,39 +3425,12 @@ def send_to_buttondown(subject, html_body):
 
 
 
-        json={
-
-
-
-
-
-
-
-            "subject": subject,
-
-
-
-
-
-
-
-            "body": html_body,
-
-
-
-
-
-
-
-            "status": "about_to_send"
-
-
-
-
-
-
-
-        },
+        json={k: v for k, v in {
+            "subject":       subject,
+            "body":          html_body,
+            "status":        "draft" if test_email else "about_to_send",
+            "email_address": test_email
+        }.items() if v is not None},
 
 
 
@@ -3482,14 +3455,10 @@ def send_to_buttondown(subject, html_body):
 
 
     if resp.status_code in (200, 201):
-
-
-
-
-
-
-
-        print("Buttondown: email queued successfully.")
+        if test_email:
+            print(f"Buttondown: test email sent to {test_email} only.")
+        else:
+            print("Buttondown: email queued successfully.")
 
 
 
@@ -5401,7 +5370,10 @@ def main(web_only=False):
 
 
 
-        send_to_buttondown(subject, email_html)
+        test_email = os.environ.get("TEST_EMAIL")
+        if test_email:
+            print(f"TEST MODE — sending to {test_email} only, no subscribers will be contacted.")
+        send_to_buttondown(subject, email_html, test_email=test_email)
 
 
 

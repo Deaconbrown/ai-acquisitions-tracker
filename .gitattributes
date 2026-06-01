@@ -1,5 +1,2 @@
-# Lock Python and config files to LF line endings on all platforms
-*.py text eol=lf
-*.json text eol=lf
-*.yml text eol=lf
-*.md text eol=lf
+# Enforce LF line endings for all text files
+* text=auto eol=lf
