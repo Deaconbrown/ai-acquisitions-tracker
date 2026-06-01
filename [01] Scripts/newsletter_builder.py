@@ -1914,7 +1914,7 @@ def call_gemini(prompt):
 
 
 
-        "generationConfig": {"maxOutputTokens": 4000}
+        "generationConfig": {"maxOutputTokens": 8000}
 
 
 
@@ -1954,15 +1954,31 @@ def call_gemini(prompt):
 
     raw = re.sub(r"\s*```$", "", raw)
 
-    if not raw:
+    finish = candidates[0].get("finishReason", "unknown")
 
-        finish = candidates[0].get("finishReason", "unknown")
+    if not raw:
 
         print(f"Gemini empty text. finishReason: {finish}")
 
         raise ValueError("Gemini returned empty text")
 
-    return json.loads(raw)
+    if finish == "MAX_TOKENS":
+
+        print(f"Gemini hit token limit — response truncated at char {len(raw)}. Increase maxOutputTokens.")
+
+        raise ValueError("Gemini response truncated — MAX_TOKENS hit")
+
+    try:
+
+        return json.loads(raw)
+
+    except json.JSONDecodeError as e:
+
+        print(f"Gemini JSON parse error: {e}")
+
+        print(f"Raw response (first 500 chars): {raw[:500]}")
+
+        raise ValueError(f"Gemini returned invalid JSON: {e}")
 
 
 
