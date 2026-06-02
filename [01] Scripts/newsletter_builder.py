@@ -3428,7 +3428,7 @@ def send_to_buttondown(subject, html_body, test_email=None):
         json={k: v for k, v in {
             "subject":       subject,
             "body":          html_body,
-            "status":        "draft" if test_email else "about_to_send",
+            "status":        "about_to_send",
             "email_address": test_email
         }.items() if v is not None},
 
