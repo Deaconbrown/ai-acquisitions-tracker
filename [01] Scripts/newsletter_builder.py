@@ -3313,7 +3313,7 @@ def render_html(data, issue_number, week_start, week_end):
 
 
 
-def send_to_buttondown(subject, html_body, test_email=None):
+def send_to_buttondown(subject, html_body):
 
 
 
@@ -3425,12 +3425,11 @@ def send_to_buttondown(subject, html_body, test_email=None):
 
 
 
-        json={k: v for k, v in {
-            "subject":       subject,
-            "body":          html_body,
-            "status":        "about_to_send",
-            "email_address": test_email
-        }.items() if v is not None},
+        json={
+            "subject": subject,
+            "body":    html_body,
+            "status":  "about_to_send"
+        },
 
 
 
@@ -3455,10 +3454,7 @@ def send_to_buttondown(subject, html_body, test_email=None):
 
 
     if resp.status_code in (200, 201):
-        if test_email:
-            print(f"Buttondown: test email sent to {test_email} only.")
-        else:
-            print("Buttondown: email queued successfully.")
+        print("Buttondown: email queued successfully.")
 
 
 
@@ -5370,10 +5366,7 @@ def main(web_only=False):
 
 
 
-        test_email = os.environ.get("TEST_EMAIL")
-        if test_email:
-            print(f"TEST MODE — sending to {test_email} only, no subscribers will be contacted.")
-        send_to_buttondown(subject, email_html, test_email=test_email)
+        send_to_buttondown(subject, email_html)
 
 
 
