@@ -5,11 +5,6 @@ on:
     - cron: "0 6 * * 1"
     - cron: "0 6 * * 5"
   workflow_dispatch:
-    inputs:
-      test_email:
-        description: 'Send test to this address only (leave blank for full send to all subscribers)'
-        required: false
-        default: ''
 
 jobs:
   build:
@@ -39,7 +34,6 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
-          TEST_EMAIL: ${{ inputs.test_email }}
         run: python "[01] Scripts/newsletter_builder.py"
 
       - name: Commit and push HTML
