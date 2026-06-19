@@ -5278,7 +5278,7 @@ def main(web_only=False):
 
 
 
-        update_public_pages(data, issue_number, week_end, update_archive=not web_only)
+    update_public_pages(data, issue_number, week_end, update_archive=not web_only)
 
 
 
