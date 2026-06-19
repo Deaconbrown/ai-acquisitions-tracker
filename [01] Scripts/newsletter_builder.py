@@ -3918,7 +3918,7 @@ def _update_index_html(data, issue_number):
 
 
 
-        f'      <a class="sn-read-link" href="/issues/issue-{issue_number:03d}.html">Read full edition →</a>\n'
+        f'      <a class="sn-read-link" href="{data.get("lead_url","#")}" target="_blank" rel="noopener">Read original article →</a>\n'
 
 
 
