@@ -359,6 +359,10 @@ ISSUE_NUMBER_OVERRIDE = os.environ.get("ISSUE_NUMBER_OVERRIDE", "")
 WEEK_DAYS_OVERRIDE    = int(os.environ.get("WEEK_DAYS_OVERRIDE", "0") or "0")
 BUTTONDOWN_STATUS     = os.environ.get("BUTTONDOWN_STATUS_OVERRIDE") or "about_to_send"
 MAX_STORIES_OVERRIDE  = int(os.environ.get("MAX_STORIES_OVERRIDE", "0") or "0")
+# When saving as a Buttondown draft (review before live), don't publish the
+# website yet either - avoids repeatedly having to revert premature site
+# updates while iterating on a draft.
+SKIP_WEBSITE_PUBLISH  = BUTTONDOWN_STATUS == "draft"
 # Catch-up mode is inferred from WEEK_DAYS_OVERRIDE being set (i.e. this run is
 # deliberately covering more than the normal week) - not a separate flag to keep
 # in sync.
@@ -5200,7 +5204,7 @@ def main(web_only=False):
 
 
 
-    if not web_only:
+    if not web_only and not SKIP_WEBSITE_PUBLISH:
 
 
 
@@ -5280,7 +5284,10 @@ def main(web_only=False):
 
 
 
-    update_public_pages(data, issue_number, week_end, update_archive=not web_only)
+    if not SKIP_WEBSITE_PUBLISH:
+        update_public_pages(data, issue_number, week_end, update_archive=not web_only)
+    else:
+        print("Draft mode - skipping website publish (issue page, index, archive, latest, newsletter.html all left untouched)")
 
 
 
