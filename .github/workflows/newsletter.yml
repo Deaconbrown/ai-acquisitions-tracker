@@ -5,6 +5,19 @@ on:
     - cron: "0 6 * * 1"
     - cron: "0 6 * * 5"
   workflow_dispatch:
+    inputs:
+      issue_number_override:
+        description: "Force a specific issue number (e.g. 10) instead of auto-increment. Leave blank for normal runs."
+        required: false
+        default: ""
+      week_days_override:
+        description: "Widen the story-selection window to N days instead of the normal 7. Leave blank for normal runs."
+        required: false
+        default: ""
+      buttondown_status_override:
+        description: "Buttondown send status - 'about_to_send' (live) or 'draft' (saves without sending). Leave blank for normal live send."
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -34,6 +47,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PERSONAL_DRIVE_TOKEN_B64: ${{ secrets.PERSONAL_DRIVE_TOKEN_B64 }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          ISSUE_NUMBER_OVERRIDE: ${{ github.event.inputs.issue_number_override }}
+          WEEK_DAYS_OVERRIDE: ${{ github.event.inputs.week_days_override }}
+          BUTTONDOWN_STATUS_OVERRIDE: ${{ github.event.inputs.buttondown_status_override }}
         run: python "[01] Scripts/newsletter_builder.py"
 
       - name: Commit and push HTML

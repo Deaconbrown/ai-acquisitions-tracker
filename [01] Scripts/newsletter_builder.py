@@ -352,6 +352,13 @@ MIN_STORIES       = 1                          # skip run if fewer stories found
 
 MAX_STORIES       = 10                         # cap passed to Claude per issue
 
+# One-off overrides for special/catch-up issues - unset in normal scheduled runs,
+# so default behaviour (auto-increment issue number, 7-day window, live send) is
+# untouched unless explicitly passed in via workflow_dispatch inputs.
+ISSUE_NUMBER_OVERRIDE = os.environ.get("ISSUE_NUMBER_OVERRIDE", "")
+WEEK_DAYS_OVERRIDE    = int(os.environ.get("WEEK_DAYS_OVERRIDE", "0") or "0")
+BUTTONDOWN_STATUS     = os.environ.get("BUTTONDOWN_STATUS_OVERRIDE") or "about_to_send"
+
 
 
 
@@ -878,7 +885,7 @@ def get_this_weeks_stories(csv_text):
 
 
 
-    cutoff = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - datetime.timedelta(days=7)
+    cutoff = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) - datetime.timedelta(days=WEEK_DAYS_OVERRIDE or 7)
 
 
 
@@ -3433,7 +3440,7 @@ def send_to_buttondown(subject, html_body):
         json={
             "subject": subject,
             "body":    html_body,
-            "status":  "about_to_send"
+            "status":  BUTTONDOWN_STATUS
         },
 
 
@@ -4791,28 +4798,12 @@ def update_public_pages(data, issue_number, week_end, update_archive=True):
 
 
 def get_issue_number():
-
-
-
-
-
-
+    if ISSUE_NUMBER_OVERRIDE:
+        return int(ISSUE_NUMBER_OVERRIDE)
 
     ISSUES_DIR.mkdir(parents=True, exist_ok=True)
 
-
-
-
-
-
-
     existing = list(ISSUES_DIR.glob("issue-*.html"))
-
-
-
-
-
-
 
     return len(existing) + 1
 
@@ -4902,7 +4893,7 @@ def main(web_only=False):
 
 
 
-    week_start = week_end - datetime.timedelta(days=7)
+    week_start = week_end - datetime.timedelta(days=WEEK_DAYS_OVERRIDE or 7)
 
 
 
