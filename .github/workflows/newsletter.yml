@@ -18,6 +18,10 @@ on:
         description: "Buttondown send status - 'about_to_send' (live) or 'draft' (saves without sending). Leave blank for normal live send."
         required: false
         default: ""
+      max_stories_override:
+        description: "Include up to N stories instead of the normal 10 (for a longer catch-up issue). Leave blank for normal runs."
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -50,6 +54,7 @@ jobs:
           ISSUE_NUMBER_OVERRIDE: ${{ github.event.inputs.issue_number_override }}
           WEEK_DAYS_OVERRIDE: ${{ github.event.inputs.week_days_override }}
           BUTTONDOWN_STATUS_OVERRIDE: ${{ github.event.inputs.buttondown_status_override }}
+          MAX_STORIES_OVERRIDE: ${{ github.event.inputs.max_stories_override }}
         run: python "[01] Scripts/newsletter_builder.py"
 
       - name: Commit and push HTML

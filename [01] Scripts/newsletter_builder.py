@@ -358,6 +358,11 @@ MAX_STORIES       = 10                         # cap passed to Claude per issue
 ISSUE_NUMBER_OVERRIDE = os.environ.get("ISSUE_NUMBER_OVERRIDE", "")
 WEEK_DAYS_OVERRIDE    = int(os.environ.get("WEEK_DAYS_OVERRIDE", "0") or "0")
 BUTTONDOWN_STATUS     = os.environ.get("BUTTONDOWN_STATUS_OVERRIDE") or "about_to_send"
+MAX_STORIES_OVERRIDE  = int(os.environ.get("MAX_STORIES_OVERRIDE", "0") or "0")
+# Catch-up mode is inferred from WEEK_DAYS_OVERRIDE being set (i.e. this run is
+# deliberately covering more than the normal week) - not a separate flag to keep
+# in sync.
+IS_CATCHUP_ISSUE      = WEEK_DAYS_OVERRIDE > 7
 
 
 
@@ -1433,7 +1438,21 @@ Article excerpt: {article_text if article_text else '(not available)'}
 
 
 
-    return f"""You are writing issue {week_start.strftime('%Y-%W')} of Senal AI, a twice-weekly newsletter covering AI company acquisitions.
+    catchup_note = ""
+    if IS_CATCHUP_ISSUE:
+        catchup_note = """
+
+THIS IS A SPECIAL CATCH-UP EDITION. The previous scheduled issues failed to reach subscribers (one rejected by the email provider, others crashed due to a temporary AI service outage), so this issue must cover everything since the last successful send, not just the last week.
+
+Because of this, write a LONGER and MORE DETAILED newsletter than usual: include more stories than a normal issue, and give slightly fuller commentary per story where it warrants it.
+
+Structure the STORIES list in reverse-chronological order: lead with the most recent and most significant stories, then work backward through the missing period, all the way back to stories from just after the last issue. Use the Date field on each story to guide this ordering - do not shuffle stories out of date order.
+
+The LEAD_BODY and WATCH_BODY should acknowledge this is a special catch-up edition covering an extended period, without dwelling on the technical reason for the gap.
+
+"""
+
+    return f"""{catchup_note}You are writing issue {week_start.strftime('%Y-%W')} of Senal AI, a twice-weekly newsletter covering AI company acquisitions.
 
 
 
@@ -5037,7 +5056,7 @@ def main(web_only=False):
 
 
 
-    stories = stories[:MAX_STORIES]
+    stories = stories[:(MAX_STORIES_OVERRIDE or MAX_STORIES)]
 
 
 
