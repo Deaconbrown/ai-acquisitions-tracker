@@ -1,0 +1,29 @@
+name: Cleanup Buttondown Drafts
+
+on:
+  workflow_dispatch:
+    inputs:
+      keep_subject:
+        description: "Exact subject line of the draft to keep - all other drafts will be deleted."
+        required: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Clean up drafts
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          KEEP_SUBJECT: ${{ github.event.inputs.keep_subject }}
+        run: python "[01] Scripts/cleanup_drafts.py"
