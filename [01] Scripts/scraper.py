@@ -35,7 +35,10 @@ else:
 
 # Google Drive settings
 DRIVE_TOKEN_PATH = os.environ.get("DRIVE_TOKEN_PATH", r"C:\Users\Arran\.claude\credentials\personal_drive_token.pickle")
-DRIVE_FOLDER_NAME = "AI Acquisitions Tracker"
+# Folder IDs (not names) - Drive allows duplicate folder names, and this project's folder is
+# nested several levels deep, so an ID is the only reliable way to target the right location.
+DRIVE_DATA_FOLDER_ID    = "1Wvkd5qGii-l2iqkgQd8x127rYWGlciCN"  # [02] Data
+DRIVE_REPORTS_FOLDER_ID = "1ZKdTiYn53lOG3famShtUQAmv-1kMh2hr"  # [05] Reports
 DRIVE_FILE_NAME = "acquisitions.csv"
 
 # Resend email notification settings
@@ -82,7 +85,7 @@ def download_csv_from_drive(service):
     # so the duplicate check has the full history to work against
     try:
         results = service.files().list(
-            q=f"name='{DRIVE_FILE_NAME}' and trashed=false",
+            q=f"name='{DRIVE_FILE_NAME}' and '{DRIVE_DATA_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
         ).execute()
         files = results.get("files", [])
@@ -103,9 +106,9 @@ def upload_to_drive(service):
     # Uploads the local CSV to Google Drive
     # If the file already exists on Drive it updates it — never duplicates
     try:
-        # Check if file already exists on Drive
+        # Check if file already exists on Drive, in the correct folder
         results = service.files().list(
-            q=f"name='{DRIVE_FILE_NAME}' and trashed=false",
+            q=f"name='{DRIVE_FILE_NAME}' and '{DRIVE_DATA_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
         ).execute()
         files = results.get("files", [])
@@ -129,8 +132,8 @@ def upload_to_drive(service):
             ).execute()
             log(f"Drive CSV updated (file ID: {file_id})")
         else:
-            # File does not exist — create it
-            file_metadata = {"name": DRIVE_FILE_NAME}
+            # File does not exist — create it in the correct folder
+            file_metadata = {"name": DRIVE_FILE_NAME, "parents": [DRIVE_DATA_FOLDER_ID]}
             created = service.files().create(
                 body=file_metadata,
                 media_body=media,
@@ -152,17 +155,17 @@ def upload_report_to_drive():
 
     report_filename = f"pattern_report_{datetime.now().strftime('%Y-%m-%d')}.md"
     files_to_upload = [
-        ("/tmp/stock_data.csv",       "stock_data.csv"),
-        (f"/tmp/{report_filename}",   report_filename),
+        ("/tmp/stock_data.csv",       "stock_data.csv",  DRIVE_DATA_FOLDER_ID),
+        (f"/tmp/{report_filename}",   report_filename,   DRIVE_REPORTS_FOLDER_ID),
     ]
 
-    for local_path, drive_name in files_to_upload:
+    for local_path, drive_name, folder_id in files_to_upload:
         if not os.path.exists(local_path):
             log(f"  [DRIVE UPLOAD] SKIPPED — {drive_name} not found at {local_path}")
             continue
         try:
             results = service.files().list(
-                q=f"name='{drive_name}' and trashed=false",
+                q=f"name='{drive_name}' and '{folder_id}' in parents and trashed=false",
                 fields="files(id, name)"
             ).execute()
             existing = results.get("files", [])
@@ -177,7 +180,7 @@ def upload_report_to_drive():
                 service.files().update(fileId=existing[0]["id"], media_body=media).execute()
                 log(f"  [DRIVE UPLOAD] {drive_name} updated on Drive")
             else:
-                service.files().create(body={"name": drive_name}, media_body=media, fields="id").execute()
+                service.files().create(body={"name": drive_name, "parents": [folder_id]}, media_body=media, fields="id").execute()
                 log(f"  [DRIVE UPLOAD] {drive_name} created on Drive")
 
         except Exception as e:
