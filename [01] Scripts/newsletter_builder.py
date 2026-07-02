@@ -359,6 +359,7 @@ ISSUE_NUMBER_OVERRIDE = os.environ.get("ISSUE_NUMBER_OVERRIDE", "")
 WEEK_DAYS_OVERRIDE    = int(os.environ.get("WEEK_DAYS_OVERRIDE", "0") or "0")
 BUTTONDOWN_STATUS     = os.environ.get("BUTTONDOWN_STATUS_OVERRIDE") or "about_to_send"
 MAX_STORIES_OVERRIDE  = int(os.environ.get("MAX_STORIES_OVERRIDE", "0") or "0")
+WEEK_END_OVERRIDE     = os.environ.get("WEEK_END_OVERRIDE", "")  # e.g. "2026-07-03" - forces the covered-period end date instead of using actual now()
 # When saving as a Buttondown draft (review before live), don't publish the
 # website yet either - avoids repeatedly having to revert premature site
 # updates while iterating on a draft.
@@ -4908,7 +4909,7 @@ def main(web_only=False):
 
 
 
-    week_end   = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+    week_end   = datetime.datetime.strptime(WEEK_END_OVERRIDE, "%Y-%m-%d") if WEEK_END_OVERRIDE else datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
 
 
 

@@ -22,6 +22,10 @@ on:
         description: "Include up to N stories instead of the normal 10 (for a longer catch-up issue). Leave blank for normal runs."
         required: false
         default: ""
+      week_end_override:
+        description: "Force the covered-period end date (e.g. 2026-07-03) instead of using the actual current UTC time. Leave blank for normal runs."
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -55,6 +59,7 @@ jobs:
           WEEK_DAYS_OVERRIDE: ${{ github.event.inputs.week_days_override }}
           BUTTONDOWN_STATUS_OVERRIDE: ${{ github.event.inputs.buttondown_status_override }}
           MAX_STORIES_OVERRIDE: ${{ github.event.inputs.max_stories_override }}
+          WEEK_END_OVERRIDE: ${{ github.event.inputs.week_end_override }}
         run: python "[01] Scripts/newsletter_builder.py"
 
       - name: Commit and push HTML
