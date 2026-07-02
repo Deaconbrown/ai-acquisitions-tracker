@@ -143,7 +143,7 @@ Run in CI:    triggered by .github/workflows/newsletter.yml every Monday and Fri
 
 
 import os
-
+import time
 
 
 
@@ -1922,19 +1922,24 @@ def call_gemini(prompt):
 
 
 
-    resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=120)
+    max_retries = 3
+    backoff_seconds = [5, 15, 45]
 
+    for attempt in range(max_retries):
+        resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=120)
 
-
-    if not resp.ok:
-
-
+        if resp.ok:
+            break
 
         print(f"Gemini error {resp.status_code}: {resp.text[:500]}")
 
+        if resp.status_code in (429, 500, 502, 503, 504) and attempt < max_retries - 1:
+            wait = backoff_seconds[attempt]
+            print(f"Retrying in {wait}s (attempt {attempt + 2}/{max_retries})...")
+            time.sleep(wait)
+            continue
 
-
-    resp.raise_for_status()
+        resp.raise_for_status()
 
 
 
@@ -3455,22 +3460,9 @@ def send_to_buttondown(subject, html_body):
 
     if resp.status_code in (200, 201):
         print("Buttondown: email queued successfully.")
-
-
-
-
-
-
-
     else:
-
-
-
-
-
-
-
         print(f"Buttondown error {resp.status_code}: {resp.text}")
+        raise RuntimeError(f"Buttondown rejected the send: {resp.status_code} {resp.text}")
 
 
 
