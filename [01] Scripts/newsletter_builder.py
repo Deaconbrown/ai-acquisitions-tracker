@@ -5319,7 +5319,8 @@ def main(web_only=False):
 
 
 
-    latest_path.write_text(html, encoding="utf-8")
+    if not SKIP_WEBSITE_PUBLISH:
+        latest_path.write_text(html, encoding="utf-8")
 
 
 
@@ -5327,7 +5328,8 @@ def main(web_only=False):
 
 
 
-    print(f"Saved: {latest_path}")
+    if not SKIP_WEBSITE_PUBLISH:
+        print(f"Saved: {latest_path}")
 
 
 
