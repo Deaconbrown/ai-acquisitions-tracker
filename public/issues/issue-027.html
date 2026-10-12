@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html lang="en">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+  <meta charset="UTF-8">
+
+
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+  <title>Senal AI, Issue 27 · 05 Oct to 12 Oct 2026</title>
+
+
+
+
+
+
+
+  <meta name="description" content="Weekly AI acquisition intelligence. Issue 27, 05 Oct to 12 Oct 2026.">
+
+
+
+
+
+
+
+  <style>
+
+
+
+
+
+
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+
+
+
+
+
+    body { background: #0d0f0d; font-family: system-ui, -apple-system, sans-serif; color: #e8e8e8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid #39ff1422; background: #0d0f0ddd; }
+
+
+
+
+
+
+
+    .sn-logo { font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: #39ff14; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-logo span { color: #e8e8e8; font-weight: 400; }
+
+
+
+
+
+
+
+    .sn-nav-links { display: flex; gap: 28px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+
+
+
+
+
+
+    .sn-nav-links a { color: #666; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-nav-links a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-subscribe-btn { background: #39ff14; color: #0d0f0d; border: none; padding: 8px 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-issue-header { max-width: 860px; margin: 0 auto; padding: 40px 40px 0; }
+
+
+
+
+
+
+
+    .sn-issue-meta { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-issue-title { font-size: 13px; color: #444; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-section { padding: 32px 40px; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+    .sn-section-label { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 22px; padding-bottom: 10px; border-bottom: 1px solid #39ff1420; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-lead-card { background: #0f110f; border: 1px solid #39ff141a; border-left: 3px solid #39ff14; padding: 26px 30px; margin-bottom: 14px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-issue-tag { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-lead-title { font-size: 20px; font-weight: 600; color: #efefef; line-height: 1.35; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-lead-source { font-size: 11px; color: #39ff1455; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-source a { color: #39ff1488; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-lead-source a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-lead-body p { font-size: 14px; color: #777; line-height: 1.8; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-body p:last-child { margin-bottom: 18px; }
+
+
+
+
+
+
+
+    .sn-read-link { font-size: 11px; color: #39ff14; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+
+
+
+
+
+
+    @media (max-width: 600px) { .sn-story-grid { grid-template-columns: 1fr; } }
+
+
+
+
+
+
+
+    .sn-story-card { background: #0f110f; border: 1px solid #1a1e1a; padding: 16px 18px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-story-tag { font-size: 10px; color: #39ff1466; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-story-title { font-size: 13px; font-weight: 500; color: #bbb; line-height: 1.45; margin-bottom: 5px; }
+
+
+
+
+
+
+
+    .sn-story-byline { font-size: 11px; color: #3a3a3a; margin-bottom: 2px; }
+
+
+
+
+
+
+
+    .sn-story-byline a { color: #39ff1455; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-story-byline a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-watch { background: #0f110f; border: 1px solid #1a1e1a; border-top: 1px solid #39ff1430; padding: 22px 28px; border-radius: 2px; margin-top: 14px; }
+
+
+
+
+
+
+
+    .sn-watch-label { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+
+
+
+
+
+
+    .sn-watch-body { font-size: 14px; color: #666; line-height: 1.8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-kofi-strip { max-width: 860px; margin: 0 auto; padding: 0 40px 24px; }
+
+
+
+
+
+
+
+    .sn-kofi-inner { border: 1px solid #39ff1420; padding: 18px 26px; display: flex; align-items: center; justify-content: space-between; border-radius: 2px; background: #090b09; gap: 20px; }
+
+
+
+
+
+
+
+    .sn-kofi-text { font-size: 13px; color: #555; }
+
+
+
+
+
+
+
+    .sn-kofi-btn { background: transparent; border: 1px solid #39ff1455; color: #39ff14; padding: 8px 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-disclaimer { max-width: 860px; margin: 0 auto; padding: 20px 40px 24px; font-size: 11px; color: #2e2e2e; line-height: 1.8; border-top: 1px solid #111; }
+
+
+
+
+
+
+
+    .sn-footer { border-top: 1px solid #111; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #2e2e2e; text-transform: uppercase; letter-spacing: 0.1em; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+  </style>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="sn-nav">
+
+
+
+
+
+
+
+  <a class="sn-logo" href="/">SEÑAL<span> AI</span></a>
+
+
+
+
+
+
+
+  <div class="sn-nav-links">
+
+
+
+
+
+
+
+    <a href="/archive">Archive</a>
+
+
+
+
+
+
+
+    <a href="/about">About</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <a class="sn-subscribe-btn" href="/#subscribe">Subscribe free</a>
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-issue-header">
+
+
+
+
+
+
+
+  <div class="sn-issue-meta">Issue 27 · 05 Oct to 12 Oct 2026</div>
+
+
+
+
+
+
+
+  <div class="sn-issue-title">AI acquisition intelligence, every Monday and Friday</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">Lead story</div>
+
+
+
+
+
+
+
+  <div class="sn-lead-card">
+
+
+
+
+
+
+
+    <div class="sn-issue-tag">This week's biggest deal</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-title">Amazon Nears $7 Billion Deal for AI Startup Decart</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-source">Reported by <a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE56RmZVMHlJVWhicVVIdy1FX0QtS1M4NFl6RG5JWFlDUFRmcENSQnlWTlZsR0pQQkZBb2RDaGQzUHBMZ0lRbk0yVHlRR2pGR2JGS00yMV9DRkxKTUdtQ2sxd3A4ZjBoVEtqWE83eDlZMU9tWUVtWFE?oc=5" target="_blank" rel="noopener">BigGo Finance →</a></div>
+
+
+
+
+
+
+
+    <div class="sn-lead-body"><p>Amazon's potential $7 billion acquisition of AI startup Decart signals a significant strategic push into advanced AI capabilities. This move underscores the escalating competition among major tech players for foundational AI technology that can enhance their core services and cloud offerings. The massive valuation suggests Decart's technology is seen as critical for Amazon's future, particularly in areas like generative AI and specialized AI model development.</p></div>
+
+
+
+
+
+
+
+    <a class="sn-read-link" href="https://news.google.com/rss/articles/CBMidkFVX3lxTE56RmZVMHlJVWhicVVIdy1FX0QtS1M4NFl6RG5JWFlDUFRmcENSQnlWTlZsR0pQQkZBb2RDaGQzUHBMZ0lRbk0yVHlRR2pGR2JGS00yMV9DRkxKTUdtQ2sxd3A4ZjBoVEtqWE83eDlZMU9tWUVtWFE?oc=5" target="_blank" rel="noopener">Read original article →</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">The week's deals</div>
+
+
+
+
+
+
+
+  <div class="sn-story-grid">
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Carnegie Learning Acquires AI Writing Platform Ethiqly</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE9vYzdhRWM3azJLcE9oZlVnTTdJblNyaE9kT1BBZE5EbUNDTHJUclJSdzdmVWRnamwzQlYtR21ydFh3N0RfNERpbzc0dEQ0aHB5QktzZTlYVlY0YmVsUU9HNWJFcUh5UE9pTTZ5ZW10YjZOOHBoUDFhN0FwNU1FaVHSAYQBQVVfeXFMTkhNSVZ6a0xPOFFBeFJ6MU95cFlyUi1DR2YwVzZRQnJ6bHU2TldFT3h4Qnd3d2dfd2ZaWVV1M0JvaG5vNHNEcjJUOHhTd3NfeEZyWkxTUUdVclVUaUdKd3NCb2lYVk1hbE9tNkM2Y281RXlDZHR3SHFuOXhqa3luNGw4MXZa?oc=5" target="_blank" rel="noopener">Pulse 2.0 →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Amazon Nears $7 Billion Deal for AI Startup Decart, WSJ Says</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMidkFVX3lxTE56RmZVMHlJVWhicVVIdy1FX0QtS1M4NFl6RG5JWFlDUFRmcENSQnlWTlZsR0pQQkZBb2RDaGQzUHBMZ0lRbk0yVHlRR2pGR2JGS00yMV9DRkxKTUdtQ2sxd3A4ZjBoVEtqWE83eDlZMU9tWUVtWFE?oc=5" target="_blank" rel="noopener">BigGo Finance →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Nvidia Eyes Reflection AI Acquisition: A Major Move That Could Reshape the Future of Open-Source Artificial Intelligence</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiZkFVX3lxTE9VMGdWMzhXNXkzN0dzTWlLal91bFR5bWtMVS1ESGRQaUxieDVJdFlnWTQ5RmI3WmI0ZWYwMU1VZkZqOEswM1o5czJpdTdsaVhHZldVMUlGMlExMDNXdFlhaktlcUxFUQ?oc=5" target="_blank" rel="noopener">Kingy AI →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Report: Amazon in talks with AI startup Decart over possible $7B acquisition</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNOUVfRzdlSFlZbi0wQUI3RFY2UlJjcFZndlpuVkdlRHBxLXB4cmc4RzNwX21DNFA2bmFZZnlISUNhTU5XcFN4UmxlVXVLZFRxWTljWG83UGlHWWlzOGcwdnFkQVRIVGo3RVFCX21RSmRBX2lyck9ONGpOQW04Qm9KazVBNTI3Mms4R1lrQ1ExTmFUOG1aa1pkc1p4bTRucUJWdUFGYUNPMndNX3Z6NGlaUg?oc=5" target="_blank" rel="noopener">SiliconANGLE →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Who is Decart? From AI startup to $7B acquisition target of Amazon (AMZN:NASDAQ)</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxNX2wtdFpaYzV2SnVRTlR2QWVDcUplYlVFUnB5UWJWNmprR3ZUbTV6bzJUTXpESE1mQUlwN0RJcTc2XzVMcE16eEZCVWxJYkxoaEhzN0JPRmdFOHVHNFp4azdiSGRnTDBlLUI2clVsY0RuVFpySXpPekdTc3RKT1N2RlFWbGRKRGRaRWVhMzBrOXBIMUo3MGJ3?oc=5" target="_blank" rel="noopener">Seeking Alpha →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Amazon (AMZN) Eyes $7 Billion Acquisition of Decart AI Amid Inte</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiygFBVV95cUxPTFJjNXV2U2laeThiSmRCdGNDd1d2MEZLNjlHc3ZvQ1VaRUlZcGFFckNjb2VoOFZUNHRERWRRcmpuNnNxbDF1VEF0WUNsNXh1c09XR2YwWXA4STR6ZVRxeGdlcVFTQ2FtcnZxTV9yOVh5U0NqWUxxTFp6TEcyb2JMbzFoUXp3YXJPT1d0UllEUklEc0pfS0NKUXVEOGZTSHV3eEx0THJEanFPWnFMa01UNk1oOHBjcjhxYU9GOUVuby1uRVN4cUNGVjFn?oc=5" target="_blank" rel="noopener">GuruFocus →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Amazon eyes Decart acquisition at $7 billion as AI chip race intensifies</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOY281NVFNUi1kcXN3djlDclhHSllJWVpBeXh1b2phaXY5S0hvRVhQejEtaThGY2gtMFJkMzFzazBrdnJ4X29Lc0c0YXNGbm5RQ0F5N240UXZ5N2JZWHpFeERYSmJqMkxuQVQ2eHdsS0JjamlpNzZZeGVIY18xVzRYWkw3X1RxMV9USFdZMnZTR1hJRkY1V3FSZkMzc0hVZ1FaN3ZqU3NCSTNJNW5RMjZRc21rT2oxLTDSAbwBQVVfeXFMUG1nUktjUmdjNFpMX1pYWlpNR29Gb3l1bHRxenVJMG5RU3FzbFd3VUM3VXo4ME15V0VwazBLN1FnNGhmQVNuUHctR2hhSUNPbVFydlRfM3BjV3p5WDhEN1l0VEtRTXYtZWkwQ0pyaFlDOEE3RGtvdGYtMW4zTjNaR3N1LUFKem05MEVJazRUZzJDS2V0SGZMTmtYVS1pUnJGc2ZNT3VQeG01QmR1M3hJdEM2SGUzNmxMM0Qxa0g?oc=5" target="_blank" rel="noopener">Business Standard →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Nvidia (NVDA) Explores Acquisition or Increased Stake in Reflection AI</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxQZUM4NXlya0VPdW9ncG45b0xCSUxuN0ZmZEVVeW5KbFk0YmQ0VXFtWGxhTkNiUUIxdC03ZlAyWURzU1BtZE15c3c3OHgtQlMtTk5BYl9jY2Uyd0lFdUdyVWVDYVdCZ1dvU1p2a1JuTGVueDh6ZDRHb05ITXI5dVExc2t3QU1jQW0wZzJfWUxvYlFfSm5NY0JGSHBQQXFCb0E0WVRGaXFpb1VjS1E?oc=5" target="_blank" rel="noopener">GuruFocus →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">NVIDIA Considers $25 Billion Acquisition of Reflection AI to Compete with Chinese AI Models</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxOVGgyQ2dlQ2IwMG0yRFp2NlN4U2l2MTU3TFdZTGFLdEtIeUVEVGVDNjFiTzZNZ1pEVERERnNOVVR4RUZpdDBxWFNaUEVrVkwwZ2hUa3lUdkg3b0x6YVdIODBuV0M2dnpqYnB3bnh6S3pUejExVDNyY211QkJITXJGUEphclFtbkl5Y0FkX0hyVjZMR2xXbEdzRXM5ZjhHcFlLTG9uLXlFbmJ6TE0?oc=5" target="_blank" rel="noopener">KuCoin →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Research</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">AMD Acquires World Labs to Enhance AI Model Research and Development</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxOT3l0T3FPVnpxaVRNRzZlUEhnSXVaajRvZlVKeTVyNEtLemNZdndUYXY3WXYtd1BLaXM3a1FXaEZzb2ZrQm1SOThQYWE2V0pCTnpEMkhaV3hJRnZJMEhIVTUyZlRidWxWSDNVcXlhM0pjLWpxck9tNHpWUUNiYlI4S2E3c3BZMTlkVF9CT3ZDaEVxdnp3N3pGa3VfOVE?oc=5" target="_blank" rel="noopener">Small Business Trends →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="sn-watch">
+
+
+
+
+
+
+
+    <div class="sn-watch-label">What to watch</div>
+
+
+
+
+
+
+
+    <div class="sn-watch-body">This week's deal flow highlights a significant surge in acquisitions targeting foundational AI capabilities. The massive potential valuation for Decart by Amazon, alongside Nvidia's exploration of Reflection AI, suggests a strategic focus on acquiring advanced AI models and talent. Companies are prioritizing technologies that will power the next generation of AI services. Keep an eye on further consolidation as major players race to secure critical AI infrastructure and intellectual property.</div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-kofi-strip">
+
+
+
+
+
+
+
+  <div class="sn-kofi-inner">
+
+
+
+
+
+
+
+    <div class="sn-kofi-text">Senal AI is free. If it is useful, you can support it.</div>
+
+
+
+
+
+
+
+    <a class="sn-kofi-btn" href="https://ko-fi.com/senaiai" target="_blank" rel="noopener">Support on Ko-fi</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-disclaimer">
+
+
+
+
+
+
+
+  Senal AI provides original analysis and commentary on news reported elsewhere. All source articles remain the property of their respective publishers and authors. Senal AI does not claim credit for any original reporting. Stories are linked directly to their source. This newsletter is independently produced and is not affiliated with any of the companies or publications mentioned.
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-footer">
+
+
+
+
+
+
+
+  <div>© 2026 Senal AI</div>
+
+
+
+
+
+
+
+  <div>senalai.com · weekly AI acquisition intelligence</div>
+
+
+
+
+
+
+
+  <a href="https://buttondown.com/senaiai/unsubscribe" style="color: #2e2e2e; text-decoration: none;">Unsubscribe</a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
