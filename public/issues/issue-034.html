@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html lang="en">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+  <meta charset="UTF-8">
+
+
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+  <title>Senal AI, Issue 34 · 30 Oct to 06 Nov 2026</title>
+
+
+
+
+
+
+
+  <meta name="description" content="Weekly AI acquisition intelligence. Issue 34, 30 Oct to 06 Nov 2026.">
+
+
+
+
+
+
+
+  <style>
+
+
+
+
+
+
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+
+
+
+
+
+    body { background: #0d0f0d; font-family: system-ui, -apple-system, sans-serif; color: #e8e8e8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid #39ff1422; background: #0d0f0ddd; }
+
+
+
+
+
+
+
+    .sn-logo { font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: #39ff14; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-logo span { color: #e8e8e8; font-weight: 400; }
+
+
+
+
+
+
+
+    .sn-nav-links { display: flex; gap: 28px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+
+
+
+
+
+
+    .sn-nav-links a { color: #666; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-nav-links a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-subscribe-btn { background: #39ff14; color: #0d0f0d; border: none; padding: 8px 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-issue-header { max-width: 860px; margin: 0 auto; padding: 40px 40px 0; }
+
+
+
+
+
+
+
+    .sn-issue-meta { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-issue-title { font-size: 13px; color: #444; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-section { padding: 32px 40px; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+    .sn-section-label { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 22px; padding-bottom: 10px; border-bottom: 1px solid #39ff1420; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-lead-card { background: #0f110f; border: 1px solid #39ff141a; border-left: 3px solid #39ff14; padding: 26px 30px; margin-bottom: 14px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-issue-tag { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-lead-title { font-size: 20px; font-weight: 600; color: #efefef; line-height: 1.35; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-lead-source { font-size: 11px; color: #39ff1455; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-source a { color: #39ff1488; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-lead-source a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-lead-body p { font-size: 14px; color: #777; line-height: 1.8; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-body p:last-child { margin-bottom: 18px; }
+
+
+
+
+
+
+
+    .sn-read-link { font-size: 11px; color: #39ff14; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+
+
+
+
+
+
+    @media (max-width: 600px) { .sn-story-grid { grid-template-columns: 1fr; } }
+
+
+
+
+
+
+
+    .sn-story-card { background: #0f110f; border: 1px solid #1a1e1a; padding: 16px 18px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-story-tag { font-size: 10px; color: #39ff1466; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-story-title { font-size: 13px; font-weight: 500; color: #bbb; line-height: 1.45; margin-bottom: 5px; }
+
+
+
+
+
+
+
+    .sn-story-byline { font-size: 11px; color: #3a3a3a; margin-bottom: 2px; }
+
+
+
+
+
+
+
+    .sn-story-byline a { color: #39ff1455; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-story-byline a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-watch { background: #0f110f; border: 1px solid #1a1e1a; border-top: 1px solid #39ff1430; padding: 22px 28px; border-radius: 2px; margin-top: 14px; }
+
+
+
+
+
+
+
+    .sn-watch-label { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+
+
+
+
+
+
+    .sn-watch-body { font-size: 14px; color: #666; line-height: 1.8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-kofi-strip { max-width: 860px; margin: 0 auto; padding: 0 40px 24px; }
+
+
+
+
+
+
+
+    .sn-kofi-inner { border: 1px solid #39ff1420; padding: 18px 26px; display: flex; align-items: center; justify-content: space-between; border-radius: 2px; background: #090b09; gap: 20px; }
+
+
+
+
+
+
+
+    .sn-kofi-text { font-size: 13px; color: #555; }
+
+
+
+
+
+
+
+    .sn-kofi-btn { background: transparent; border: 1px solid #39ff1455; color: #39ff14; padding: 8px 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-disclaimer { max-width: 860px; margin: 0 auto; padding: 20px 40px 24px; font-size: 11px; color: #2e2e2e; line-height: 1.8; border-top: 1px solid #111; }
+
+
+
+
+
+
+
+    .sn-footer { border-top: 1px solid #111; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #2e2e2e; text-transform: uppercase; letter-spacing: 0.1em; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+  </style>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="sn-nav">
+
+
+
+
+
+
+
+  <a class="sn-logo" href="/">SEÑAL<span> AI</span></a>
+
+
+
+
+
+
+
+  <div class="sn-nav-links">
+
+
+
+
+
+
+
+    <a href="/archive">Archive</a>
+
+
+
+
+
+
+
+    <a href="/about">About</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <a class="sn-subscribe-btn" href="/#subscribe">Subscribe free</a>
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-issue-header">
+
+
+
+
+
+
+
+  <div class="sn-issue-meta">Issue 34 · 30 Oct to 06 Nov 2026</div>
+
+
+
+
+
+
+
+  <div class="sn-issue-title">AI acquisition intelligence, every Monday and Friday</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">Lead story</div>
+
+
+
+
+
+
+
+  <div class="sn-lead-card">
+
+
+
+
+
+
+
+    <div class="sn-issue-tag">This week's biggest deal</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-title">Meta Acquires Conductor to Expand Into Multi-Agent AI Coding Tools</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-source">Reported by <a href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE83VU01REtnMFM3cXRBdlRJcUhtX0ZQQ3M0c1RSM3E3VVFmZDJUc1dnd0ZTRVZWcmgtVUNZeDYxV0lfWXVIOHdsM3NSS0xCczZaeGRhcGo5M3ZMdzFpcHlPbDBkWklwYW8?oc=5" target="_blank" rel="noopener">THE ELEC, Korea Electronics Industry Media →</a></div>
+
+
+
+
+
+
+
+    <div class="sn-lead-body"><p>Meta's acquisition of Conductor signals a strategic move to bolster its capabilities in developing and managing multi-agent AI systems. This acquisition indicates a growing trend towards sophisticated AI development tools that go beyond single-agent applications. By integrating Conductor's technology, Meta aims to enhance its own AI research and development, potentially accelerating the creation of more complex and autonomous AI functionalities.</p></div>
+
+
+
+
+
+
+
+    <a class="sn-read-link" href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE83VU01REtnMFM3cXRBdlRJcUhtX0ZQQ3M0c1RSM3E3VVFmZDJUc1dnd0ZTRVZWcmgtVUNZeDYxV0lfWXVIOHdsM3NSS0xCczZaeGRhcGo5M3ZMdzFpcHlPbDBkWklwYW8?oc=5" target="_blank" rel="noopener">Read original article →</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">The week's deals</div>
+
+
+
+
+
+
+
+  <div class="sn-story-grid">
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Windward Acquires Azimut.ai To Expand Maritime Visual Intelligence And Vessel Monitoring Capabilities - Pulse 2.0</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMivgFBVV95cUxQNWZPTGthMlNua2VOYWVMLUFBeUlJd0JrcXVseEhtSV9LLTBCYWFDUkY2SU50SHNBVFpsblU2UXpzR0JfSk1BR2pSMHBlYmRTaVBNalBWZFNaWFJSMlpLOFk2bC1uSk1Xak93SjZaRExTdXdMVTg4SFAwWjNGaUVqckNCcUw2Z0FQdGZTeVB3dm1DMGY3NGo2OUhfUGJya3JLZ19ZT3d4alE2eTlXYVprSHRHM0Y1V1RYeVJlTWFB?oc=5" target="_blank" rel="noopener">Pulse 2.0 →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Meta Acquires AI Coding Startup Conductor as President Warns Midterm Results Will Make Data Centers Harder to Build - AI Insider</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMi6AFBVV95cUxOcXViaFBFRGtFYWM1ZGZ6MzRKMllQTG9DRHVLamVlTGE2djI5S0dmLUlrSGJDazFyUE4zb0RSMnM2OElnc2dTU0NpU0JVNHJVcHhOUTdVb3RraXhIajdvV1VTd2xnWlRRd3daXzhIVkJPYV8welNEWmlXWUUtdjRZOHFQTEZkeFladXdxSmRPZHFBWUF4Skl2SnFfVFlhakJjaDJQdkRUQm5STEdBeHctVGFsVjRmRnlJb2IwLUNzNzFBeTJtbDBsX204TnRuTlN4YnNwYWRUSll6aEdnNVptVWxUellwZHFr?oc=5" target="_blank" rel="noopener">AI Insider →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">EXL acquires AI consulting firm Aimpoint Digital - Tech Observer Magazine</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxPYTUzaTNEVUNGOC1QTjQzcFhfUnpxazg4TnRiX1kzelgzdlk1YTNvdnJIS1dUYnhsN1plQ1ZHSFNScmZZa3ZHQ1B6WmZ2dWxXUXdETkJ2Ml9HcHlRcWk3Z1RVZUlaaEpWcmY5MUM3bVhDMjllWUxWZlBmanJtSTA5WnZaNkNKVC05X29Ia0JOVXFTQUHSAZgBQVVfeXFMT0J1RVhUVG85QjhHbThIVEhPUWwzVTY5MmgxVklwRFFlWXVpZFFCcmFUQy1RakstYzQ2aXpVUGgxMHBqT0o5RTBBSVVUSGFjNmpDNkswdS1uQ3ZHX25EcndROS1zNDI2dHBoQTBfV2pUVTBXTGRqY2VVZ3BPb1pqQmpQdm9Vc0hOUUxMMHRVWHJnOFlCeWZMcU0?oc=5" target="_blank" rel="noopener">Tech Observer Magazine →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Meta acquires AI-powered coding startup Conductor for an undisclosed amount - CXO Digitalpulse</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxOMi1jdk93bzUtWkYxcW5fUUY0SnhnQkpINkFlbnptdmVtQWZnU0JuR3lMQjhzYl91TnNzTkZKVHdVN0k3N2EwcVl3MGlFNWxIM1ZvaG1wbERKM05hOEhhQjRhdzRQVVVzZHlHUHFMbVJ2RjdKUXhQeU9ZVnlUYlJnUS1yMVFHbk5LdEI1Q2FrTGdmM29EamZrWXZFZVo2NzEzU25fMS1VYnFWNXNr?oc=5" target="_blank" rel="noopener">CXO Digitalpulse →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Meta acquires Conductor, a startup that helps developers manage multiple AI agents at once - NEWS.am TECH</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiSEFVX3lxTE1DTlRLbm1FQnlhQ1dyUVZyNHFQMzFlYnJLSVBUVXAzQ09VUVhhOUh2MnNQS29hTno4dy11bk0ycTVwek1QU2NOZg?oc=5" target="_blank" rel="noopener">NEWS.am TECH →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Infrastructure</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Palo Alto Networks plans $500M acquisition of A... - Pluang</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxOVEJlX0x4OGVLMl9rQjJGdTFvd1dFNG5ZRHdDcWg5eTFFUWluSFUwT3N4SmpCR1FxemFiZmlvWFhyR3NpWWZuMF92aG8tYzZxU0tKSzFacUxDQ2hhVXluM0pITVVzOHNNRmdRTjRtM3htbGVHQkZuYlNiYmh3WHJtWW9fUU5LT0p1NDZvcEYzd0NQUldqaHhtZlN6cUo?oc=5" target="_blank" rel="noopener">Pluang →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Infrastructure</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Palo Alto Networks to acquire AI security startup Clutch in a $500 million deal - KuCoin</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMipgFBVV95cUxPT19mbVdPZEZfeHdIcmdzWG1qU056ZmVGWFFXNkdEdGRJZi1fX3BCbDBaTkRmX3RVYzk1N2ItYkxlTk1yeTdkcVBESWM0bVpjNU1CMVJzSnBPUGhhWjVkZFBPOHZXdnNGbGJ1bFRlZGI4cnFOYWRyWklqYzZFNWxGQUJ2Mmh5Mk5LR1pFZTJMdmFxamFGS0x0NWFheUh3d2ZhT05RTGN3?oc=5" target="_blank" rel="noopener">KuCoin →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Gamehaus acquires majority stake in AI micro serial platform Anamana - Vietnam Investment Review - VIR</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxQUERINVd5WFBLUFRmYkNEX3lwdjJlNElQVW9kcHJkalNpTDVjNGo5Z1U4cHppWGxUTUY3YkZMMnFrUDVHNGlGWWdCdzNtdkxIUFcwd1p3TFFiOC1qWElsOEg3ZGlxcGxZVlNGdXR3MmxhcGhDUmdVbWJZanJ5bVZob1lMTW5xWThPMU5kczNFdlg0ZUJPX1BfOFh5UXdxcTI4?oc=5" target="_blank" rel="noopener">Vietnam Investment Review - VIR →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Sidley Represents Five9 in Its US$325 Million Acquisition of Level AI - Legal Desire</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxPUXE2MmVNVGRLdXpDUEZXZ1o3MVhaS3Q4Q3lRYmQ2T1RCOW5rZUJITFJhSnFIa2l4T3VySm5tQmZ6UnNRT2VrU2QyRjRMV3pGSFpNNUV3b1h2T0M3b2tPMlRQM1M2bGVBYXlCT1k0dnlJaE1uWXhVT2lvUFFvY1NtQmYtNFZieklQYzg3VlB0S0E5Z3ZqdHRHMw?oc=5" target="_blank" rel="noopener">Legal Desire →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="sn-watch">
+
+
+
+
+
+
+
+    <div class="sn-watch-label">What to watch</div>
+
+
+
+
+
+
+
+    <div class="sn-watch-body">This week's acquisitions highlight a continued focus on AI tooling and infrastructure. Meta's pursuit of multi-agent AI capabilities and Palo Alto Networks' investment in AI security underscore the strategic importance of these areas. Expect further consolidation as companies seek to integrate specialized AI technologies to enhance their platforms and offerings. The market will likely see more deals aimed at acquiring expertise in AI development, management, and security.</div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-kofi-strip">
+
+
+
+
+
+
+
+  <div class="sn-kofi-inner">
+
+
+
+
+
+
+
+    <div class="sn-kofi-text">Senal AI is free. If it is useful, you can support it.</div>
+
+
+
+
+
+
+
+    <a class="sn-kofi-btn" href="https://ko-fi.com/senaiai" target="_blank" rel="noopener">Support on Ko-fi</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-disclaimer">
+
+
+
+
+
+
+
+  Senal AI provides original analysis and commentary on news reported elsewhere. All source articles remain the property of their respective publishers and authors. Senal AI does not claim credit for any original reporting. Stories are linked directly to their source. This newsletter is independently produced and is not affiliated with any of the companies or publications mentioned.
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-footer">
+
+
+
+
+
+
+
+  <div>© 2026 Senal AI</div>
+
+
+
+
+
+
+
+  <div>senalai.com · weekly AI acquisition intelligence</div>
+
+
+
+
+
+
+
+  <a href="https://buttondown.com/senaiai/unsubscribe" style="color: #2e2e2e; text-decoration: none;">Unsubscribe</a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
