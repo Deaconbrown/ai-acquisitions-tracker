@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html lang="en">
+
+
+
+
+
+
+
+<head>
+
+
+
+
+
+
+
+  <meta charset="UTF-8">
+
+
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+
+
+
+
+  <title>Senal AI, Issue 36 · 06 Nov to 13 Nov 2026</title>
+
+
+
+
+
+
+
+  <meta name="description" content="Weekly AI acquisition intelligence. Issue 36, 06 Nov to 13 Nov 2026.">
+
+
+
+
+
+
+
+  <style>
+
+
+
+
+
+
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+
+
+
+
+
+    body { background: #0d0f0d; font-family: system-ui, -apple-system, sans-serif; color: #e8e8e8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid #39ff1422; background: #0d0f0ddd; }
+
+
+
+
+
+
+
+    .sn-logo { font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: #39ff14; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-logo span { color: #e8e8e8; font-weight: 400; }
+
+
+
+
+
+
+
+    .sn-nav-links { display: flex; gap: 28px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+
+
+
+
+
+
+    .sn-nav-links a { color: #666; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-nav-links a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-subscribe-btn { background: #39ff14; color: #0d0f0d; border: none; padding: 8px 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-issue-header { max-width: 860px; margin: 0 auto; padding: 40px 40px 0; }
+
+
+
+
+
+
+
+    .sn-issue-meta { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-issue-title { font-size: 13px; color: #444; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-section { padding: 32px 40px; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+    .sn-section-label { font-size: 10px; letter-spacing: 0.25em; color: #39ff14; text-transform: uppercase; margin-bottom: 22px; padding-bottom: 10px; border-bottom: 1px solid #39ff1420; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-lead-card { background: #0f110f; border: 1px solid #39ff141a; border-left: 3px solid #39ff14; padding: 26px 30px; margin-bottom: 14px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-issue-tag { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+
+
+
+
+
+
+
+    .sn-lead-title { font-size: 20px; font-weight: 600; color: #efefef; line-height: 1.35; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-lead-source { font-size: 11px; color: #39ff1455; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-source a { color: #39ff1488; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-lead-source a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+    .sn-lead-body p { font-size: 14px; color: #777; line-height: 1.8; margin-bottom: 14px; }
+
+
+
+
+
+
+
+    .sn-lead-body p:last-child { margin-bottom: 18px; }
+
+
+
+
+
+
+
+    .sn-read-link { font-size: 11px; color: #39ff14; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+
+
+
+
+
+
+    @media (max-width: 600px) { .sn-story-grid { grid-template-columns: 1fr; } }
+
+
+
+
+
+
+
+    .sn-story-card { background: #0f110f; border: 1px solid #1a1e1a; padding: 16px 18px; border-radius: 2px; }
+
+
+
+
+
+
+
+    .sn-story-tag { font-size: 10px; color: #39ff1466; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+
+
+
+
+
+
+
+    .sn-story-title { font-size: 13px; font-weight: 500; color: #bbb; line-height: 1.45; margin-bottom: 5px; }
+
+
+
+
+
+
+
+    .sn-story-byline { font-size: 11px; color: #3a3a3a; margin-bottom: 2px; }
+
+
+
+
+
+
+
+    .sn-story-byline a { color: #39ff1455; text-decoration: none; }
+
+
+
+
+
+
+
+    .sn-story-byline a:hover { color: #39ff14; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-watch { background: #0f110f; border: 1px solid #1a1e1a; border-top: 1px solid #39ff1430; padding: 22px 28px; border-radius: 2px; margin-top: 14px; }
+
+
+
+
+
+
+
+    .sn-watch-label { font-size: 10px; color: #39ff14; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+
+
+
+
+
+
+
+    .sn-watch-body { font-size: 14px; color: #666; line-height: 1.8; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-kofi-strip { max-width: 860px; margin: 0 auto; padding: 0 40px 24px; }
+
+
+
+
+
+
+
+    .sn-kofi-inner { border: 1px solid #39ff1420; padding: 18px 26px; display: flex; align-items: center; justify-content: space-between; border-radius: 2px; background: #090b09; gap: 20px; }
+
+
+
+
+
+
+
+    .sn-kofi-text { font-size: 13px; color: #555; }
+
+
+
+
+
+
+
+    .sn-kofi-btn { background: transparent; border: 1px solid #39ff1455; color: #39ff14; padding: 8px 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .sn-disclaimer { max-width: 860px; margin: 0 auto; padding: 20px 40px 24px; font-size: 11px; color: #2e2e2e; line-height: 1.8; border-top: 1px solid #111; }
+
+
+
+
+
+
+
+    .sn-footer { border-top: 1px solid #111; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #2e2e2e; text-transform: uppercase; letter-spacing: 0.1em; max-width: 860px; margin: 0 auto; }
+
+
+
+
+
+
+
+  </style>
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="sn-nav">
+
+
+
+
+
+
+
+  <a class="sn-logo" href="/">SEÑAL<span> AI</span></a>
+
+
+
+
+
+
+
+  <div class="sn-nav-links">
+
+
+
+
+
+
+
+    <a href="/archive">Archive</a>
+
+
+
+
+
+
+
+    <a href="/about">About</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <a class="sn-subscribe-btn" href="/#subscribe">Subscribe free</a>
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-issue-header">
+
+
+
+
+
+
+
+  <div class="sn-issue-meta">Issue 36 · 06 Nov to 13 Nov 2026</div>
+
+
+
+
+
+
+
+  <div class="sn-issue-title">AI acquisition intelligence, every Monday and Friday</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">Lead story</div>
+
+
+
+
+
+
+
+  <div class="sn-lead-card">
+
+
+
+
+
+
+
+    <div class="sn-issue-tag">This week's biggest deal</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-title">IBM Acquires AuthMind to Monitor AI Agent Credential Use</div>
+
+
+
+
+
+
+
+    <div class="sn-lead-source">Reported by <a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxNQ3c0WV8yYU1WR2J4VkwzR2RSQTNQenJKclMzcW5fRGNhWkxIdkxRN1BLV3ZUWWQzOU9FR3QyZ0tBQ3JxbDBhc2pIZWVLZEZ1VmN2aUZvNDNUZG9fYTVXT3NaRmstV21Tbk80T2RZZHdJRzhudFFBTkowckotcXhjMGtFMzU?oc=5" target="_blank" rel="noopener">Unite.AI →</a></div>
+
+
+
+
+
+
+
+    <div class="sn-lead-body"><p>IBM's acquisition of AuthMind signals a critical shift towards securing the expanding AI ecosystem. As AI agents become more autonomous and integrated into business processes, managing their credentials and access becomes paramount. This move by IBM underscores the growing need for robust identity and access management solutions tailored for AI, addressing a nascent but vital security challenge. It highlights how foundational infrastructure and security protocols are developing in parallel with AI capabilities.</p></div>
+
+
+
+
+
+
+
+    <a class="sn-read-link" href="https://news.google.com/rss/articles/CBMihAFBVV95cUxNQ3c0WV8yYU1WR2J4VkwzR2RSQTNQenJKclMzcW5fRGNhWkxIdkxRN1BLV3ZUWWQzOU9FR3QyZ0tBQ3JxbDBhc2pIZWVLZEZ1VmN2aUZvNDNUZG9fYTVXT3NaRmstV21Tbk80T2RZZHdJRzhudFFBTkowckotcXhjMGtFMzU?oc=5" target="_blank" rel="noopener">Read original article →</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-section">
+
+
+
+
+
+
+
+  <div class="sn-section-label">The week's deals</div>
+
+
+
+
+
+
+
+  <div class="sn-story-grid">
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">GoEngineer Acquires ITHENA, Expanding AI and Industrial IoT Manufacturing Capabilities - citybiz</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxOTmFxYWRWZDJRbFZXQlhaeEE1OGhGbV90cGVlVWtPUzI3dklFTV9qaHFPNktGMGZvaTRvZ2dYSlVsUnZsZVc0UDdXVVBtdDhDS3RTX2J1cHhqYmxUaFV3NTgtRGRQb0JFM3BxalZkeWV4bkFzbjBZdW04RTRoVU5NTGdHUjFCZFN3dThHaDZwZkdTQmh3b1p6SDlkR2lVcWNfeEoyQUIzUjkxRlhpSF9TQ200dUFxdkY4eGZtS2tMa3dTd?oc=5" target="_blank" rel="noopener">citybiz →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">4DS Memory Limited (ASX:4DS): How the Jenesys Acquisition Reshapes Its AI Development Plans - Kalkine</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxOUmszZlgwQmhvdXBIUUdaS2pLSllPV0ZzX3o0cEs1T1RiX05ISWpHaG5kbnNzc1dERjRjMXVMWGU2YUViZEhMcEl1WnNzSkktUHlFaTNNTHVpZW5tRHJfenl6OTJwS2lNbkU1X01pb1oxbkxJTlNjSWxIYzlhNHU5YlFwN3RxR0lMZmZRRlpqQ1dSeUtRWmRIUXlqU0d1bm5xd1g1bEt4dy1lQ3E5SmI4ZDZtWUtSTU1ia1JUNFRjaVVleWJC?oc=5" target="_blank" rel="noopener">Kalkine →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">4DS Memory Ltd (ASX:4DS) Reframes Its Technology Program After Jenesys Edge-AI Acquisition - Kalkine</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMixwFBVV95cUxPeV85YjdncXFSdmJLZHhKSnhDeTBqR3JBbkVGSXZHRFNpeFRWOTROYmxIYlA3S083eUhoaFNUeVMxT0VmbXpUaHFtbHdxdGhjYmRwYjRPaGpzXzNCVTZuUXZaTVktdURaWVlTZlJfMlFRNTd6QndPeDZVeFhkZHlsR0kzbmNTX0tnMTBpU290M2pkc3FCZ0tWQlBFZDQzVUZlaUZMOHkxWHBTZTdBd1VqT3l4V2h5aEYzTmhJVTcyRHlVUEVZNzFj?oc=5" target="_blank" rel="noopener">Kalkine →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Avanade to expand AI and automation capabilities with Robiquity acquisition - IT Pro</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxPOGM5QlpVWHhFS2VFY1RQUGRLamx5THVwa1pwN2gtQXV0NWtwekVZbGx3OXZRaWgzR3VYVEVCNTRYRVZNTmV6VXlQc3l1YUxWaHNKTU52U2ZVRWt5dEtPVTZHbnpCTnhBR0czb01JSXlDQkMwZVo5enVnTHJTRTdKeTdvNW50Zm1EUllzN2xyc1dnN3ZsQWtGalVTLTJ3b1pSUDFlYXVJbzhSZVg3QzF1bXZYVVl3bUFwbVE?oc=5" target="_blank" rel="noopener">IT Pro →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Samsung Modine Acquisition Talks: $0 Terms Disclosed [2026] - shattered.io</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxPOTU5NlNWN2tmNjF0cElkcnNYZ19TZzBFbU1PSnNsSTdtX0NMdjJYQUx0c3dkdEhpN0stS0NpSEJ4Um0zSW1pRUlNdG5FUmszRWJOZDEyT2toazh3U0l2a0lTX25McC1weGViNVdIc1BOMU95c2pxUUctcURyRDdSeldaUE5qVkl5TGVoQ3M0bFZpVmVl?oc=5" target="_blank" rel="noopener">shattered.io →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Infrastructure</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">ADB SAFEGATE Completes Acquisition of Synaptic Aviation, Adding AI Computer Vision to Apron Operations - Avi-Go</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMic0FVX3lxTE1SMy1ZN2JPSzM5WDYwbFVLUXd4djhhMmVKVmlnUnp3bl9rdnRLa3VuVGl6QVdDTnVDX3lKZ0oyb2dlc1BZZkROcHNUckVYVVNXN3pqSDRlVUVWZXEyZWM5WkdlbmNTVFotSTZhUUhhXzhOVzA?oc=5" target="_blank" rel="noopener">Avi-Go →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">IBM Acquires AuthMind to Monitor AI Agent Credential Use - Unite.AI</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxNQ3c0WV8yYU1WR2J4VkwzR2RSQTNQenJKclMzcW5fRGNhWkxIdkxRN1BLV3ZUWWQzOU9FR3QyZ0tBQ3JxbDBhc2pIZWVLZEZ1VmN2aUZvNDNUZG9fYTVXT3NaRmstV21Tbk80T2RZZHdJRzhudFFBTkowckotcXhjMGtFMzU?oc=5" target="_blank" rel="noopener">Unite.AI →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Other</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">DGEN TECHNOLOGIES ACQUIRES EXCLUSIVE LICENCE TO HUMANOS ARTIFICIAL INTELLIGENCE TECHNOLOGY - Yahoo! Finance Canada</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxON0kxQVFZeE85MFR5eVJyNlR6VVlZelNWNEcwWE1BRWJFZml3Z2xic01CVDV4TnAtbG0ydzRfT0I5WGttT3plR3VGTTluY05Od040RzhNZEthaXZZb3FSQ21lS3pXbFR4RTJ0QWQ4R1ZHM21Yd3NzbVVvN2V4bEJrSkRicUVLVHE3MlZTbDdSdHptN3ppRVZfMg?oc=5" target="_blank" rel="noopener">Yahoo! Finance Canada →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Tooling</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Elligint Health Acquires Laguna Health to Embed Conversational AI Across 13 Million Managed Lives - HIT Consultant</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMiuAFBVV95cUxONmxLS0Jod3BFUE9YdHJzMVlTMmU4MXZIQ0Q4a3RqbFU5MXJOdkVySkZoWVNWc2ZsSTFFRFlDdS1FaFRJNDkwSzBJWFktaEpiUEo0VnJKeVN2dVRqZWw2WnNRcGZEWV95SWEtZ1l2UHhrRkVQMG1oOGtFckNFMGdsdUFTbl82Rk4ya1VkWEVVNUhSMUxZZVZJVkg0MXBhNWtvRWJzVzV5X2pXVEo0S0YwWmxsbWk3OUkw?oc=5" target="_blank" rel="noopener">HIT Consultant →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <div class="sn-story-card">
+
+
+
+
+
+
+
+          <div class="sn-story-tag">Data</div>
+
+
+
+
+
+
+
+          <div class="sn-story-title">Boomi CEO Steve Lucas on how latest acquisition brings trusted data to AI era - qz.com</div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline"><a href="https://news.google.com/rss/articles/CBMickFVX3lxTE1uSS1hVVRsMlplWk42RTFFUGFYRXJ6RlgtcHo0ZGJSTlFJWnVwU1FCeldVRDNSRTdLQ2pFanU5bXh1UFNvNHotd0xuSENDelJXWGFQbHlkd2pqckNGSzBwbERmcG5wNk5Ja1JwXy1JbTZUUQ?oc=5" target="_blank" rel="noopener">qz.com →</a></div>
+
+
+
+
+
+
+
+          <div class="sn-story-byline">Today</div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+  <div class="sn-watch">
+
+
+
+
+
+
+
+    <div class="sn-watch-label">What to watch</div>
+
+
+
+
+
+
+
+    <div class="sn-watch-body">This week's acquisitions highlight the AI industry's rapid maturation, with companies focusing on enhancing specific capabilities like industrial IoT, AI development, automation, and crucially, security. The consolidation around AI infrastructure and specialized tooling indicates a market seeking to build more robust and secure AI applications. Expect continued M&A activity in areas that underpin reliable AI deployment, particularly those addressing data integrity and cybersecurity for AI systems.</div>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-kofi-strip">
+
+
+
+
+
+
+
+  <div class="sn-kofi-inner">
+
+
+
+
+
+
+
+    <div class="sn-kofi-text">Senal AI is free. If it is useful, you can support it.</div>
+
+
+
+
+
+
+
+    <a class="sn-kofi-btn" href="https://ko-fi.com/senaiai" target="_blank" rel="noopener">Support on Ko-fi</a>
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-disclaimer">
+
+
+
+
+
+
+
+  Senal AI provides original analysis and commentary on news reported elsewhere. All source articles remain the property of their respective publishers and authors. Senal AI does not claim credit for any original reporting. Stories are linked directly to their source. This newsletter is independently produced and is not affiliated with any of the companies or publications mentioned.
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="sn-footer">
+
+
+
+
+
+
+
+  <div>© 2026 Senal AI</div>
+
+
+
+
+
+
+
+  <div>senalai.com · weekly AI acquisition intelligence</div>
+
+
+
+
+
+
+
+  <a href="https://buttondown.com/senaiai/unsubscribe" style="color: #2e2e2e; text-decoration: none;">Unsubscribe</a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+</html>
